@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Szablonopis</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#0b0b0c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
+    /* Minimalny, schludny styl */
+    :root { color-scheme: light dark; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #0b0b0c; color: #e9e9ea; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+    h1 { font-size: 20px; margin: 0 0 16px; font-weight: 600; }
+    .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font: inherit; }
+    .hint { opacity: .8; font-size: 13px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <h1>Wpisz dane</h1>
+        <div class="card" style="margin-bottom:16px">
+            <label>Stan<br><input id="stan" placeholder="np. Bardzo dobry" value="Bardzo dobry"></label><br><br>
+            <label>Rozmiar<br><input id="rozmiar" placeholder="np. S" value="S"></label><br><br>
+            <label>Kolor<br><input id="kolor" placeholder="np. Czarny" value="Czarny"></label><br><br>
+            <label>Długość całkowita<br><input id="dlugosc" placeholder="np. 65cm" value="65cm"></label><br><br>
+            <label>Szerokość pod pachami<br><input id="szerokosc" placeholder="np. 56cm" value="56cm"></label><br><br>
+            <label>Długość od pachy do końca rękawa<br><input id="rekaw" placeholder="np. 52cm" value="52cm"></label>
+        </div>
+    <h1>Podgląd opisu</h1>
+    <div class="card">
+        <pre>
+            🌟 Stan: <b><span id="v-stan">Bardzo dobry</span></b>
+            👕 Rozmiar: <b><span id="v-rozmiar">S</span></b>
+            🎨 Kolor: <b><span id="v-kolor">Czarny</span></b>
+
+
+            📏 Wymiary:
+            • Długość całkowita: <b><span id="v-dlugosc">65cm</span></b>
+            • Szerokość pod pachami: <b><span id="v-szerokosc">56cm</span></b>
+            • Długość od pachy do końca rękawa: <b><span id="v-rekaw">52cm</span></b>
+
+
+            📩 Więcej informacji na priv 😊
+
+
+            #Nike #bluza #kaptur #męska #damska #man #woman #hoodie #crewneck #sweatshirt #vintage #unisex #swoosh #air #max #adidas #retro #zipped #oversize #y2k
+        </pre>
+        <button id="copy" style="margin-top:12px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08); color:inherit; font-weight:600; cursor:pointer">Kopiuj opis</button>
+    </div>
+    <p class="hint">Na tym etapie to tylko statyczny widok — w następnym kroku dodamy pola do zmiany wartości i „Kopiuj”.</p>
+  </div>
+
+    <script>
+        // KLUCZ w localStorage
+        const LS_KEY = "szablonopis_v1";
+
+        // Mapowanie pól formularza -> miejsc w podglądzie
+        const pairs = [
+            ["stan", "v-stan"],
+            ["rozmiar", "v-rozmiar"],
+            ["kolor", "v-kolor"],
+            ["dlugosc", "v-dlugosc"],
+            ["szerokosc", "v-szerokosc"],
+            ["rekaw", "v-rekaw"],
+        ];
+
+        // 1) Wczytaj zapisane wartości (jeśli są)
+        const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+
+        // 2) Połącz pola z podglądem + inicjalizacja z localStorage
+        const state = {};
+        for (const [inputId, viewId] of pairs) {
+            const input = document.getElementById(inputId);
+            const view  = document.getElementById(viewId);
+
+            // jeśli mamy zapisane — wstaw do inputa
+            if (saved[inputId]) input.value = saved[inputId];
+
+            // ustaw widok na start
+            view.textContent = input.value;
+            state[inputId] = input.value;
+
+            // aktualizacja przy pisaniu
+            input.addEventListener("input", () => {
+            state[inputId] = input.value;
+            view.textContent = input.value;
+            // zapisuj lekko odroczone (prosto i skutecznie)
+            scheduleSave();
+            });
+
+            // miły drobiazg: zaznacz całą wartość po fokusie (szybka podmiana)
+            input.addEventListener("focus", () => input.select());
+        }
+
+        // 3) Zapisywanie do localStorage (z prostym „debounce”)
+        let saveTimer = null;
+        function scheduleSave() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+            localStorage.setItem(LS_KEY, JSON.stringify(state));
+            }, 150);
+        }
+
+        // 4) Kopiowanie całego opisu
+        document.getElementById("copy").addEventListener("click", async () => {
+            const pre = document.querySelector(".card + p, .card pre") // zabezpieczenie
+            ? document.querySelector(".card pre")
+            : document.querySelector("pre");
+            const text = pre.innerText;
+            try {
+            await navigator.clipboard.writeText(text);
+            const btn = document.getElementById("copy");
+            const old = btn.textContent;
+            btn.textContent = "Skopiowano ✓";
+            setTimeout(()=> btn.textContent = old, 1200);
+            } catch {
+            alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
+            }
+        });
+
+        // 5) Dodatkowo: zapisz stan przy zamykaniu karty (na wszelki wypadek)
+        window.addEventListener("beforeunload", () => {
+            localStorage.setItem(LS_KEY, JSON.stringify(state));
+        });
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js');
+        }
+    </script>
+
+</body>
+</html>
