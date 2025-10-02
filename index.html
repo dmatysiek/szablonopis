@@ -2,10 +2,9 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <!-- zapobiega auto-zoomowi i poprawia zachowanie tapów na iOS -->
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc</title>
-  <link rel="manifest" href="manifest.webmanifest?v=30">
+  <link rel="manifest" href="manifest.webmanifest?v=31">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -26,7 +25,7 @@
       --radius-sm: 10px;
     }
     *{ box-sizing: border-box; }
-    html{ -webkit-text-size-adjust: 100%; } /* iOS: nie zmieniaj skali czcionek */
+    html{ -webkit-text-size-adjust: 100%; }
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -74,7 +73,7 @@
       -webkit-text-fill-color: var(--text);
       outline: none;
       transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-      touch-action: manipulation;          /* szybkie tapy na mobile */
+      touch-action: manipulation;
     }
     .control:focus{
       border-color: var(--border-strong);
@@ -84,9 +83,16 @@
     select.control option{ color:var(--text); background: var(--card-2); }
 
     .checkbox-row{
-      display:flex; align-items:center; gap:10px; padding: 8px 0 2px;
+      display:flex; align-items:center; gap:10px;
+      padding: 8px 0 0;
+      margin-bottom: 12px;             /* domyślny odstęp PO checkboxie (gdy brak pola) */
     }
-    .checkbox-row input[type="checkbox"]{ width:18px; height:18px; margin:0; accent-color: var(--accent); }
+    .checkbox-row input[type="checkbox"]{
+      width:18px; height:18px; margin:0; accent-color: var(--accent);
+    }
+
+    /* Pole z uwagami – pokaż/ukryj, odstęp PONIŻEJ pola ustawimy w JS */
+    #uwagiLabel{ display:none; margin: 0; }
 
     /* Podgląd */
     pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line-height:1.45; letter-spacing:.1px; }
@@ -106,9 +112,18 @@
     .btn:hover{ background:#1d2024; border-color: var(--border-strong); }
     .btn:active{ transform: scale(.99); }
 
-    /* jaśniejsze placeholdery w polach */
-    .control::placeholder { color: rgba(232,232,236,.50); }
-    .control::-webkit-input-placeholder { color: rgba(232,232,236,.50); } /* iOS Safari */
+    /* Placeholdery – subtelnie szare, również na iOS */
+    input.control::placeholder,
+    textarea.control::placeholder{
+      color: rgba(232,232,236,.50) !important;
+      opacity: 1;
+    }
+    input.control::-webkit-input-placeholder,
+    textarea.control::-webkit-input-placeholder{
+      color: rgba(232,232,236,.50) !important;
+      -webkit-text-fill-color: rgba(232,232,236,.50) !important;
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -120,7 +135,6 @@
   </div>
 
   <div class="wrap">
-    <!-- Karta z formularzem (bez nagłówka „Dane”) -->
     <div class="card card-pad">
       <div class="form-grid">
 
@@ -176,12 +190,12 @@
           </select>
         </div>
 
-        <label class="checkbox-row">
+        <label class="checkbox-row" id="uwagiRow">
           <input type="checkbox" id="uwagiOn">
           Dodatkowa linijka?
-        </label><br />
+        </label>
 
-        <div class="field" id="uwagiLabel" style="display:none;">
+        <div class="field" id="uwagiLabel">
           <label>Treść dodatkowej informacji…</label>
           <input id="uwagiText" class="control" type="text" placeholder="np. Bluza ma plamę na rękawie">
         </div>
@@ -245,17 +259,33 @@
     const uwagiWrap  = document.getElementById("v-uwagi-wrap");
     const uwagiSpan  = document.getElementById("v-uwagi");
     const uwagiLabel = document.getElementById("uwagiLabel");
+    const uwagiRow   = document.getElementById("uwagiRow");
 
     if (uwagiOn && saved.uwagiOn) uwagiOn.checked = true;
     if (uwagiText && typeof saved.uwagiText === "string") uwagiText.value = saved.uwagiText;
 
     function renderUwagi() {
-      if (!uwagiOn || !uwagiText || !uwagiLabel || !uwagiWrap || !uwagiSpan) return;
+      if (!uwagiOn || !uwagiText || !uwagiLabel || !uwagiWrap || !uwagiSpan || !uwagiRow) return;
+
       const enabled = uwagiOn.checked;
       const txt = (uwagiText.value || "").trim();
+
       state.uwagiOn = enabled;
       state.uwagiText = uwagiText.value || "";
-      uwagiLabel.style.display = enabled ? "block" : "none";
+
+      if (enabled) {
+        // pokaz pole, BEZ przerwy między checkboxem a polem,
+        // za to z przerwą POD polem (przed wymiarami)
+        uwagiRow.style.marginBottom = "0px";
+        uwagiLabel.style.display = "block";
+        uwagiLabel.style.margin = "0 0 12px 0"; // odstęp POD polem
+      } else {
+        // ukryj pole i zostaw przerwę PO checkboxie
+        uwagiLabel.style.display = "none";
+        uwagiRow.style.marginBottom = "12px";
+      }
+
+      // podgląd
       if (enabled && txt) { uwagiSpan.textContent = txt; uwagiWrap.style.display = "inline"; }
       else { uwagiSpan.textContent = ""; uwagiWrap.style.display = "none"; }
     }
@@ -287,25 +317,21 @@
       }
     }
 
+    // Auto-select w polach wymiarów (tap -> zaznacza całość)
     ["dlugosc","szerokosc","rekaw"].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
-    
       const selectAll = () => { try { el.select(); } catch(_){} };
-    
-      // iOS: po focuse zaznacz wszystko
       el.addEventListener("focus", () => setTimeout(selectAll, 0));
-    
-      // 1-tap z nieaktywnego stanu: nie wstawiaj kursora, tylko zaznacz całość
       el.addEventListener("pointerdown", (e) => {
         if (document.activeElement !== el) {
-          e.preventDefault();     // bez tego iOS wstawia kursor
+          e.preventDefault();
           el.focus();
           selectAll();
         }
       });
     });
-    
+
     let saveTimer = null;
     function scheduleSave() {
       clearTimeout(saveTimer);
@@ -332,11 +358,8 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=30');
+      navigator.serviceWorker.register('./sw.js?v=31');
     }
   </script>
 </body>
 </html>
-
-
-
