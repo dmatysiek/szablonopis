@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Szablonopis</title>
-    <link rel="manifest" href="manifest.webmanifest?v=9">
+    <link rel="manifest" href="manifest.webmanifest?v=10">
     <meta name="theme-color" content="#0b0b0c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -35,18 +35,64 @@
               </select>
             </label><br><br>
 
-            <label>Rozmiar<br><input id="rozmiar" placeholder="np. S" value="S"></label><br><br>
-            <label>Kolor<br><input id="kolor" placeholder="np. Czarny" value="Czarny"></label><br><br>
-            <label>Długość całkowita<br><input id="dlugosc" placeholder="np. 65cm" value="65cm"></label><br><br>
-            <label>Szerokość pod pachami<br><input id="szerokosc" placeholder="np. 56cm" value="56cm"></label><br><br>
-            <label>Długość od pachy do końca rękawa<br><input id="rekaw" placeholder="np. 52cm" value="52cm"></label>
+            <label>Rozmiar<br>
+                <select id="rozmiar">
+                    <option value="XS">XS</option>
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="Damski XS">Damski XS</option>
+                    <option value="Damski S">Damski S</option>
+                    <option value="Damski M">Damski M</option>
+                    <option value="Damski L">Damski L</option>
+                    <option value="Damski XL">Damski XL</option>
+                    <option value="Męski XS">Męski XS</option>
+                    <option value="Męski S">Męski S</option>
+                    <option value="Męski M">Męski M</option>
+                    <option value="Męski L">Męski L</option>
+                    <option value="Męski XL">Męski XL</option>
+                  </select>
+            </label><br><br>
+            
+            <label>Kolor<br>
+                <select id="kolor">
+                    <option value="Czarny">Czarny</option>
+                    <option value="Biały">Biały</option>
+                    <option value="Szary">Szary</option>
+                    <option value="Brązowy">Brązowy</option>
+                    <option value="Niebieski">Niebieski</option>
+                    <option value="Granatowy">Granatowy</option>
+                    <option value="Zielony">Zielony</option>
+                    <option value="Burgundowy">Burgundowy</option>
+                    <option value="Fioletowy">Fioletowy</option>
+                    <option value="Czerwony">Czerwony</option>
+                    <option value="Beżowy">Beżowy</option>
+                    <option value="Kremowy">Kremowy</option>
+                    <option value="Różowy">Różowy</option>
+                    <option value="Żółty">Żółty</option>
+                  </select>
+            </label><br><br>
+            
+            <label>Długość całkowita (cm)<br>
+              <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
+            </label><br><br>
+            
+            <label>Szerokość pod pachami (cm)<br>
+              <input id="szerokosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
+            </label><br><br>
+            
+            <label>Długość od pachy do końca rękawa (cm)<br>
+              <input id="rekaw" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
+            </label>
+
         </div>
     <h1>Podgląd opisu</h1>
     <div class="card">
         <pre>
-🌟 Stan: <b><span id="v-stan">Bardzo dobry</span></b>
-👕 Rozmiar: <b><span id="v-rozmiar">S</span></b>
-🎨 Kolor: <b><span id="v-kolor">Czarny</span></b>
+🌟 Stan: <b><span id="v-stan"></span></b>
+👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
+🎨 Kolor: <b><span id="v-kolor"></span></b>
 
 📏 Wymiary:
 • Długość całkowita: <b><span id="v-dlugosc">65cm</span></b>
@@ -84,25 +130,27 @@
         for (const [inputId, viewId] of pairs) {
             const input = document.getElementById(inputId);
             const view  = document.getElementById(viewId);
-
-            // jeśli mamy zapisane — wstaw do inputa
+            
             if (saved[inputId]) input.value = saved[inputId];
-
-            // ustaw widok na start
-            view.textContent = input.value;
-            state[inputId] = input.value;
-
-            // aktualizacja przy pisaniu
+            
+            // funkcja formatująca: jeśli ma data-suffix, dołóż np. "cm"
+            const renderValue = () => {
+                const raw = input.value?.toString().trim();
+                const suffix = input.dataset.suffix || "";
+                view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
+                state[inputId] = input.value; // zapisujemy surową liczbę (bez "cm")
+            };
+            
+            renderValue(); // ustaw na start
+            
             input.addEventListener("input", () => {
-            state[inputId] = input.value;
-            view.textContent = input.value;
-            // zapisuj lekko odroczone (prosto i skutecznie)
-            scheduleSave();
+                renderValue();
+                scheduleSave();
             });
-
-            // miły drobiazg: zaznacz całą wartość po fokusie (szybka podmiana)
+            
             input.addEventListener("focus", () => input.select());
         }
+
 
         // 3) Zapisywanie do localStorage (z prostym „debounce”)
         let saveTimer = null;
@@ -138,12 +186,13 @@
 
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=9');
+        navigator.serviceWorker.register('./sw.js?v=10');
       }
     </script>
 
 </body>
 </html>
+
 
 
 
