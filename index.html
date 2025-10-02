@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Szablonopis</title>
-    <link rel="manifest" href="manifest.webmanifest?v=18">
+    <link rel="manifest" href="manifest.webmanifest?v=19">
     <meta name="theme-color" content="#0b0b0c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -143,128 +143,131 @@
   </div>
 
     <script>
-        // KLUCZ w localStorage
-        const LS_KEY = "szablonopis_v1";
-
-        // Mapowanie pól formularza -> miejsc w podglądzie
-        const pairs = [
-            ["stan", "v-stan"],
-            ["rozmiar", "v-rozmiar"],
-            ["kolor", "v-kolor"],
-            ["dlugosc", "v-dlugosc"],
-            ["szerokosc", "v-szerokosc"],
-            ["rekaw", "v-rekaw"],
-        ];
-
-        // 1) Wczytaj zapisane wartości (jeśli są)
-        const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
-
-        const uwagiOn    = document.getElementById("uwagiOn");
-        const uwagiText  = document.getElementById("uwagiText");
-        const uwagiWrap  = document.getElementById("v-uwagi-wrap");
-        const uwagiSpan  = document.getElementById("v-uwagi");
-        const uwagiLabel = document.getElementById("uwagiLabel");
-        
-        // Przywróć zapisane ustawienia (jeśli były)
-        if (saved.uwagiOn) uwagiOn.checked = true;
-        if (saved.uwagiText) uwagiText.value = saved.uwagiText;
-        
-        // Funkcja renderująca opcjonalną linijkę
-        function renderUwagi() {
-          const enabled = uwagiOn.checked;
-          const txt = (uwagiText.value || "").trim();
-        
-          // zapis do stanu (żeby poszło do localStorage)
-          state.uwagiOn = enabled;
-          state.uwagiText = uwagiText.value || "";
-        
-          // UI formularza: pokaż/ukryj pole tekstowe
-          uwagiLabel.style.display = enabled ? "block" : "none";
-        
-          // Podgląd i kopiowanie: pokaż/ukryj linijkę
-          if (enabled && txt) {
-            uwagiSpan.textContent = txt;
-            uwagiWrap.style.display = "inline";
-          } else {
-            uwagiSpan.textContent = "";
-            uwagiWrap.style.display = "none";
-          }
+      // KLUCZ w localStorage
+      const LS_KEY = "szablonopis_v1";
+    
+      // Mapowanie pól formularza -> miejsc w podglądzie
+      const pairs = [
+        ["stan", "v-stan"],
+        ["rozmiar", "v-rozmiar"],
+        ["kolor", "v-kolor"],
+        ["dlugosc", "v-dlugosc"],
+        ["szerokosc", "v-szerokosc"],
+        ["rekaw", "v-rekaw"],
+      ];
+    
+      // 1) Wczytaj zapisane wartości (jeśli są)
+      const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+    
+      // --- Stan aplikacji (MUSI być przed użyciem w renderUwagi) ---
+      const state = {};
+    
+      // --- Uchwyty do opcji "uwagi" ---
+      const uwagiOn    = document.getElementById("uwagiOn");
+      const uwagiText  = document.getElementById("uwagiText");
+      const uwagiWrap  = document.getElementById("v-uwagi-wrap");
+      const uwagiSpan  = document.getElementById("v-uwagi");
+      const uwagiLabel = document.getElementById("uwagiLabel");
+    
+      // Przywróć zapisane ustawienia (jeśli były)
+      if (uwagiOn && saved.uwagiOn) uwagiOn.checked = true;
+      if (uwagiText && typeof saved.uwagiText === "string") uwagiText.value = saved.uwagiText;
+    
+      // Funkcja renderująca opcjonalną linijkę
+      function renderUwagi() {
+        if (!uwagiOn || !uwagiText || !uwagiLabel || !uwagiWrap || !uwagiSpan) return;
+        const enabled = uwagiOn.checked;
+        const txt = (uwagiText.value || "").trim();
+    
+        // zapis do stanu (żeby poszło do localStorage)
+        state.uwagiOn = enabled;
+        state.uwagiText = uwagiText.value || "";
+    
+        // UI formularza: pokaż/ukryj pole tekstowe
+        uwagiLabel.style.display = enabled ? "block" : "none";
+    
+        // Podgląd i kopiowanie: pokaż/ukryj linijkę
+        if (enabled && txt) {
+          uwagiSpan.textContent = txt;
+          uwagiWrap.style.display = "inline";
+        } else {
+          uwagiSpan.textContent = "";
+          uwagiWrap.style.display = "none";
         }
-        
-        // Nasłuch na przełącznik i pole tekstowe
-        uwagiOn.addEventListener("change", () => { renderUwagi(); scheduleSave(); });
-        uwagiText.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
-        
-        // Ustaw stan przy pierwszym uruchomieniu
-        renderUwagi();
-
-        // 2) Połącz pola z podglądem + inicjalizacja z localStorage
-        const state = {};
-        for (const [inputId, viewId] of pairs) {
-            const input = document.getElementById(inputId);
-            const view  = document.getElementById(viewId);
-            
-            if (saved[inputId]) input.value = saved[inputId];
-            
-            // funkcja formatująca: jeśli ma data-suffix, dołóż np. "cm"
-            const renderValue = () => {
-                const raw = input.value?.toString().trim();
-                const suffix = input.dataset.suffix || "";
-                view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
-                state[inputId] = input.value; // zapisujemy surową liczbę (bez "cm")
-            };
-            
-            renderValue(); // ustaw na start
-            
-            input.addEventListener("input", () => {
-                renderValue();
-                scheduleSave();
-            });
-            
-            input.addEventListener("focus", () => input.select());
-        }
-
-
-        // 3) Zapisywanie do localStorage (z prostym „debounce”)
-        let saveTimer = null;
-        function scheduleSave() {
-            clearTimeout(saveTimer);
-            saveTimer = setTimeout(() => {
-            localStorage.setItem(LS_KEY, JSON.stringify(state));
-            }, 150);
-        }
-
-        // 4) Kopiowanie całego opisu
-        document.getElementById("copy").addEventListener("click", async () => {
-            const pre = document.querySelector(".card + p, .card pre") // zabezpieczenie
-            ? document.querySelector(".card pre")
-            : document.querySelector("pre");
-            const text = pre.innerText;
-            try {
-            await navigator.clipboard.writeText(text);
-            const btn = document.getElementById("copy");
-            const old = btn.textContent;
-            btn.textContent = "Skopiowano ✓";
-            setTimeout(()=> btn.textContent = old, 1200);
-            } catch {
-            alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
-            }
+      }
+    
+      // Nasłuch na przełącznik i pole tekstowe
+      uwagiOn?.addEventListener("change", () => { renderUwagi(); scheduleSave(); });
+      uwagiText?.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
+    
+      // Ustaw stan przy pierwszym uruchomieniu
+      renderUwagi();
+    
+      // 2) Połącz pola z podglądem + inicjalizacja z localStorage
+      for (const [inputId, viewId] of pairs) {
+        const input = document.getElementById(inputId);
+        const view  = document.getElementById(viewId);
+        if (!input || !view) continue;
+    
+        if (saved[inputId] !== undefined) input.value = saved[inputId];
+    
+        // funkcja formatująca: jeśli ma data-suffix, dołóż np. "cm"
+        const renderValue = () => {
+          const raw = input.value?.toString().trim();
+          const suffix = input.dataset.suffix || "";
+          view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
+          state[inputId] = input.value; // zapisujemy surową wartość (bez "cm")
+        };
+    
+        renderValue(); // ustaw na start
+    
+        input.addEventListener("input", () => {
+          renderValue();
+          scheduleSave();
         });
-
-        // 5) Dodatkowo: zapisz stan przy zamykaniu karty (na wszelki wypadek)
-        window.addEventListener("beforeunload", () => {
-            localStorage.setItem(LS_KEY, JSON.stringify(state));
-        });
+    
+        input.addEventListener("focus", () => input.select && input.select());
+      }
+    
+      // 3) Zapisywanie do localStorage (z prostym „debounce”)
+      let saveTimer = null;
+      function scheduleSave() {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(() => {
+          localStorage.setItem(LS_KEY, JSON.stringify(state));
+        }, 150);
+      }
+    
+      // 4) Kopiowanie całego opisu
+      document.getElementById("copy").addEventListener("click", async () => {
+        const pre = document.querySelector(".card pre") || document.querySelector("pre");
+        const text = pre ? pre.innerText : "";
+        try {
+          await navigator.clipboard.writeText(text);
+          const btn = document.getElementById("copy");
+          const old = btn.textContent;
+          btn.textContent = "Skopiowano ✓";
+          setTimeout(()=> btn.textContent = old, 1200);
+        } catch {
+          alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
+        }
+      });
+    
+      // 5) Zapis przy zamykaniu karty
+      window.addEventListener("beforeunload", () => {
+        localStorage.setItem(LS_KEY, JSON.stringify(state));
+      });
     </script>
 
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=18');
+        navigator.serviceWorker.register('./sw.js?v=19');
       }
     </script>
 
 </body>
 </html>
+
 
 
 
