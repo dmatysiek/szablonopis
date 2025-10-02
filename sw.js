@@ -1,5 +1,5 @@
 // prościutki cache offline
-const CACHE = "szablonopis-v9";
+const CACHE = "szablonopis-v10";
 const ASSETS = [
   "./",
   "./index.html",
@@ -25,6 +25,7 @@ self.addEventListener("fetch", (e) => {
     caches.match(e.request).then(r => r || fetch(e.request))
   );
 });
+
 
 
 
