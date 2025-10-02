@@ -1,7 +1,7 @@
 {
   "name": "QuickDesc",
   "short_name": "QuickDesc",
-  "start_url": "./?appv=27",
+  "start_url": "./?appv=28",
   "display": "standalone",
   "background_color": "#0b0b0c",
   "theme_color": "#0b0b0c",
@@ -10,6 +10,7 @@
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
+
 
 
 
