@@ -2,15 +2,15 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- zapobiega auto-zoomowi i poprawia zachowanie tapów na iOS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc</title>
-  <link rel="manifest" href="manifest.webmanifest?v=26">
+  <link rel="manifest" href="manifest.webmanifest?v=27">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
 
   <style>
-    /* ====== Kolory i bazowe ustawienia ====== */
     :root{
       color-scheme: light dark;
       --bg: #0b0b0c;
@@ -20,14 +20,13 @@
       --border-strong: rgba(255,255,255,.14);
       --text: #e9e9ea;
       --text-dim: #b8b8bb;
-      --accent: #21c0a5;        /* delikatna mięta jako akcent */
+      --accent: #21c0a5;
       --shadow: 0 12px 30px rgba(0,0,0,.35);
       --radius: 14px;
       --radius-sm: 10px;
     }
-
-    * { box-sizing: border-box; }
-
+    *{ box-sizing: border-box; }
+    html{ -webkit-text-size-adjust: 100%; } /* iOS: nie zmieniaj skali czcionek */
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -36,10 +35,9 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-
     .wrap{ max-width: 760px; margin: 0 auto; padding: 18px 16px 28px; }
 
-    /* ====== Pasek tytułu (lekki, jak w natywnych apkach) ====== */
+    /* Pasek tytułu */
     .topbar{
       position: sticky; top: 0; z-index: 5;
       background: linear-gradient(180deg, #0b0b0c, rgba(11,11,12,.92));
@@ -49,7 +47,7 @@
     .topbar-inner{ max-width: 760px; margin: 0 auto; padding: 14px 16px; }
     .title{ font-size: 20px; font-weight: 600; letter-spacing:.2px; }
 
-    /* ====== Karty ====== */
+    /* Karty */
     .card{
       background: var(--card);
       border: 1px solid var(--border);
@@ -59,24 +57,11 @@
     .card-pad{ padding: 16px; }
     .card + .card{ margin-top: 18px; }
 
-    /* ====== Tytuły sekcji ====== */
-    .section-title{
-      font-size: 14px; font-weight: 600; color: var(--text-dim);
-      letter-spacing:.4px; text-transform: uppercase;
-      padding: 10px 2px 6px; margin: 0 0 6px;
-      border-bottom: 1px dashed var(--border);
-    }
-
-    /* ====== Form ====== */
+    /* Form */
     .form-grid{ display: grid; gap: 14px; }
-
     .field label{
-      display:block;
-      font-size: 13px;
-      color: var(--text-dim);
-      margin: 0 0 6px;
+      display:block; font-size: 13px; color: var(--text-dim); margin: 0 0 6px;
     }
-
     .control{
       width:100%;
       height: 46px;
@@ -85,9 +70,11 @@
       border: 1px solid var(--border);
       background: var(--card-2);
       color: var(--text);
-      -webkit-text-fill-color: var(--text); /* iOS zamknięty select */
+      font-size: 17px;                    /* >=16px -> brak auto-zoomu */
+      -webkit-text-fill-color: var(--text);
       outline: none;
       transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+      touch-action: manipulation;          /* szybkie tapy na mobile */
     }
     .control:focus{
       border-color: var(--border-strong);
@@ -96,24 +83,15 @@
     }
     select.control option{ color:var(--text); background: var(--card-2); }
 
-    /* Checkbox w jednej linii */
     .checkbox-row{
-      display:flex; align-items:center; gap:10px;
-      padding: 8px 0 2px;
+      display:flex; align-items:center; gap:10px; padding: 8px 0 2px;
     }
-    .checkbox-row input[type="checkbox"]{
-      width: 18px; height: 18px; margin:0;
-      accent-color: var(--accent);
-    }
+    .checkbox-row input[type="checkbox"]{ width:18px; height:18px; margin:0; accent-color: var(--accent); }
 
-    /* Tekstowe pole „uwagi” */
-    #uwagiLabel{ margin-top: -2px; }
-    #uwagiText.control{ height: 46px; }
-
-    /* ====== Podgląd ====== */
+    /* Podgląd */
     pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line-height:1.45; letter-spacing:.1px; }
 
-    /* ====== Przycisk kopiowania ====== */
+    /* Przycisk kopiowania */
     .btn{
       display:block; width:100%;
       border-radius: var(--radius);
@@ -123,17 +101,14 @@
       color: var(--text); font-weight: 600;
       cursor:pointer;
       transition: background .15s ease, transform .05s ease, border-color .15s ease;
+      touch-action: manipulation;
     }
     .btn:hover{ background:#1d2024; border-color: var(--border-strong); }
     .btn:active{ transform: scale(.99); }
-
-    /* Separator jak w natywnych apkach */
-    .sep{ height: 1px; background: var(--border); margin: 18px 0; border-radius: 2px; }
   </style>
 </head>
 <body>
 
-  <!-- Pasek tytułu -->
   <div class="topbar">
     <div class="topbar-inner">
       <div class="title">QuickDesc</div>
@@ -141,10 +116,8 @@
   </div>
 
   <div class="wrap">
-
-    <!-- Karta z formularzem -->
+    <!-- Karta z formularzem (bez nagłówka „Dane”) -->
     <div class="card card-pad">
-      <h2 class="section-title">Dane</h2>
       <div class="form-grid">
 
         <div class="field">
@@ -209,8 +182,6 @@
           <input id="uwagiText" class="control" type="text" placeholder="np. Bluza ma plamę na rękawie">
         </div>
 
-        <div class="sep"></div>
-
         <div class="field">
           <label>Długość całkowita (cm)</label>
           <input id="dlugosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
@@ -229,7 +200,7 @@
       </div>
     </div>
 
-    <!-- Karta z podglądem -->
+    <!-- Podgląd -->
     <div class="card card-pad">
 <pre>
 🌟 Stan: <b><span id="v-stan"></span></b>
@@ -250,10 +221,8 @@
   </div>
 
   <script>
-    // KLUCZ w localStorage
     const LS_KEY = "szablonopis_v1";
 
-    // Mapowanie pól formularza -> miejsc w podglądzie
     const pairs = [
       ["stan", "v-stan"],
       ["rozmiar", "v-rozmiar"],
@@ -263,13 +232,10 @@
       ["rekaw", "v-rekaw"],
     ];
 
-    // 1) Wczytaj zapisane wartości (jeśli są)
     const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
-
-    // --- Stan aplikacji ---
     const state = {};
 
-    // --- Opcjonalna linijka ---
+    // Opcjonalna linijka
     const uwagiOn    = document.getElementById("uwagiOn");
     const uwagiText  = document.getElementById("uwagiText");
     const uwagiWrap  = document.getElementById("v-uwagi-wrap");
@@ -283,25 +249,17 @@
       if (!uwagiOn || !uwagiText || !uwagiLabel || !uwagiWrap || !uwagiSpan) return;
       const enabled = uwagiOn.checked;
       const txt = (uwagiText.value || "").trim();
-
       state.uwagiOn = enabled;
       state.uwagiText = uwagiText.value || "";
-
       uwagiLabel.style.display = enabled ? "block" : "none";
-
-      if (enabled && txt) {
-        uwagiSpan.textContent = txt;
-        uwagiWrap.style.display = "inline";
-      } else {
-        uwagiSpan.textContent = "";
-        uwagiWrap.style.display = "none";
-      }
+      if (enabled && txt) { uwagiSpan.textContent = txt; uwagiWrap.style.display = "inline"; }
+      else { uwagiSpan.textContent = ""; uwagiWrap.style.display = "none"; }
     }
     uwagiOn?.addEventListener("change", () => { renderUwagi(); scheduleSave(); });
     uwagiText?.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
     renderUwagi();
 
-    // 2) Inicjalizacja pól
+    // Pola formularza
     for (const [inputId, viewId] of pairs) {
       const input = document.getElementById(inputId);
       const view  = document.getElementById(viewId);
@@ -315,16 +273,16 @@
         view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
         state[inputId] = input.value;
       };
-
       renderValue();
 
-      input.addEventListener("input", () => {
-        renderValue();
-        scheduleSave();
-      });
+      input.addEventListener("input", () => { renderValue(); scheduleSave(); });
+
+      // iOS: po zmianie selecta od razu blur -> kolejny select otwiera się za 1 tap
+      if (input.tagName === "SELECT") {
+        input.addEventListener("change", () => { input.blur(); });
+      }
     }
 
-    // 3) Zapisywanie (debounce)
     let saveTimer = null;
     function scheduleSave() {
       clearTimeout(saveTimer);
@@ -333,22 +291,17 @@
       }, 150);
     }
 
-    // 4) Kopiowanie
     document.getElementById("copy").addEventListener("click", async () => {
       const pre = document.querySelector(".card pre") || document.querySelector("pre");
       const text = pre ? pre.innerText : "";
       try {
         await navigator.clipboard.writeText(text);
         const btn = document.getElementById("copy");
-        const old = btn.textContent;
-        btn.textContent = "Skopiowano ✓";
+        const old = btn.textContent; btn.textContent = "Skopiowano ✓";
         setTimeout(()=> btn.textContent = old, 1200);
-      } catch {
-        alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
-      }
+      } catch { alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C."); }
     });
 
-    // 5) Zapis przy zamykaniu karty
     window.addEventListener("beforeunload", () => {
       localStorage.setItem(LS_KEY, JSON.stringify(state));
     });
@@ -356,7 +309,7 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=26');
+      navigator.serviceWorker.register('./sw.js?v=27');
     }
   </script>
 </body>
