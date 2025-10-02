@@ -9,6 +9,266 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="icon-192.png">
   <style>
+    /* Minimalny,  schludny styl */
+    :root { color-scheme: light dark; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #0b0b0c; color: #e9e9ea; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+    h1 { font-size: 20px; margin: 0 0 16px; font-weight: 600; }
+    .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font: inherit; }
+    .hint { opacity: .8; font-size: 13px; margin-top: 10px; }
+
+    .card.right-side label { 
+      display:block; 
+      margin-bottom:12px; 
+      text-align:right;             /* etykiety po prawej */
+    }
+    
+    .card.right-side input,
+    .card.right-side select {
+      width:100%;
+      box-sizing:border-box;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color:#e9e9ea;                /* kolor tekstu */
+      -webkit-text-fill-color:#e9e9ea; /* iOS Safari – tekst na biało */
+      outline:none;
+      font-size:16px;
+      line-height:1.2;
+      height:44px;                  /* większy tap-target */
+      text-align:right;             /* wpisy po prawej */
+      appearance:none;              /* ujednolicenie wyglądu */
+      -webkit-appearance:none;
+    }
+    
+    .card.right-side input::placeholder {
+      color: rgba(233,233,234,.55);
+      text-align:right;
+    }
+    
+    /* select – strzałka ma trochę miejsca po prawej */
+    .card.right-side select { padding-right:34px; }
+    
+    /* delikatny efekt focusa */
+    .card.right-side input:focus,
+    .card.right-side select:focus {
+      border-color: rgba(255,255,255,.35);
+      box-shadow: 0 0 0 3px rgba(255,255,255,.12);
+    }
+    
+    /* biała czcionka również dla <option> (widoczna w zamkniętym selectcie) */
+    .card.right-side select option {
+      color:#e9e9ea;
+    }
+    
+    /* tytuł formularza wyrównany do prawej */
+    .right-title { text-align:right; }
+    
+    /* cały blok formularza „przyklej” do prawej krawędzi kontenera */
+    .right-side { margin-left:auto; }
+    
+    /* odstępy między polami (bo usunęliśmy część <br>) – opcjonalnie możesz zostawić swoje <br> */
+    .card.right-side label + label { margin-top:10px; }
+
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+        <div class="card right-side" style="margin-bottom:16px">
+            
+            <label>Stan<br>
+              <select id="stan">
+                <option value="Dobry">Dobry</option>
+                <option value="Bardzo dobry" selected>Bardzo dobry</option>
+                <option value="Nowy bez metki">Nowy bez metki</option>
+                <option value="Nowy z metką">Nowy z metką</option>
+                <option value="Świetny, jak nowy">Świetny, jak nowy</option>
+              </select>
+            </label><br><br>
+
+            <label>Rozmiar<br>
+                <select id="rozmiar">
+                    <option value="XS">XS</option>
+                    <option value="S" selected>S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                    <option value="Damski XS">Damski XS</option>
+                    <option value="Damski S">Damski S</option>
+                    <option value="Damski M">Damski M</option>
+                    <option value="Damski L">Damski L</option>
+                    <option value="Damski XL">Damski XL</option>
+                    <option value="Męski XS">Męski XS</option>
+                    <option value="Męski S">Męski S</option>
+                    <option value="Męski M">Męski M</option>
+                    <option value="Męski L">Męski L</option>
+                    <option value="Męski XL">Męski XL</option>
+                  </select>
+            </label><br><br>
+            
+            <label>Kolor<br>
+                <select id="kolor">
+                    <option value="Czarny" selected>Czarny</option>
+                    <option value="Biały">Biały</option>
+                    <option value="Szary">Szary</option>
+                    <option value="Brązowy">Brązowy</option>
+                    <option value="Niebieski">Niebieski</option>
+                    <option value="Granatowy">Granatowy</option>
+                    <option value="Zielony">Zielony</option>
+                    <option value="Burgundowy">Burgundowy</option>
+                    <option value="Fioletowy">Fioletowy</option>
+                    <option value="Czerwony">Czerwony</option>
+                    <option value="Beżowy">Beżowy</option>
+                    <option value="Kremowy">Kremowy</option>
+                    <option value="Różowy">Różowy</option>
+                    <option value="Żółty">Żółty</option>
+                  </select>
+            </label><br><br>
+            
+            <label>Długość całkowita (cm)<br>
+              <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
+            </label><br><br>
+            
+            <label>Szerokość pod pachami (cm)<br>
+              <input id="szerokosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
+            </label><br><br>
+            
+            <label>Długość od pachy do końca rękawa (cm)<br>
+              <input id="rekaw" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
+            </label>
+
+        </div>
+    <h1>Podgląd opisu</h1>
+    <div class="card">
+        <pre>
+🌟 Stan: <b><span id="v-stan"></span></b>
+👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
+🎨 Kolor: <b><span id="v-kolor"></span></b>
+
+📏 Wymiary:
+• Długość całkowita: <b><span id="v-dlugosc">65cm</span></b>
+• Szerokość pod pachami: <b><span id="v-szerokosc">56cm</span></b>
+• Długość od pachy do końca rękawa: <b><span id="v-rekaw">52cm</span></b>
+
+📩 Więcej informacji na priv 😊
+
+#Nike #bluza #kaptur #męska #damska #man #woman #hoodie #crewneck #sweatshirt #vintage #unisex #swoosh #air #max #adidas #retro #zipped #oversize #y2k
+        </pre>
+        <button id="copy" style="margin-top:12px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08); color:inherit; font-weight:600; cursor:pointer">Kopiuj opis</button>
+    </div>
+  </div>
+
+    <script>
+        // KLUCZ w localStorage
+        const LS_KEY = "szablonopis_v1";
+
+        // Mapowanie pól formularza -> miejsc w podglądzie
+        const pairs = [
+            ["stan", "v-stan"],
+            ["rozmiar", "v-rozmiar"],
+            ["kolor", "v-kolor"],
+            ["dlugosc", "v-dlugosc"],
+            ["szerokosc", "v-szerokosc"],
+            ["rekaw", "v-rekaw"],
+        ];
+
+        // 1) Wczytaj zapisane wartości (jeśli są)
+        const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+
+        // 2) Połącz pola z podglądem + inicjalizacja z localStorage
+        const state = {};
+        for (const [inputId, viewId] of pairs) {
+            const input = document.getElementById(inputId);
+            const view  = document.getElementById(viewId);
+            
+            if (saved[inputId]) input.value = saved[inputId];
+            
+            // funkcja formatująca: jeśli ma data-suffix, dołóż np. "cm"
+            const renderValue = () => {
+                const raw = input.value?.toString().trim();
+                const suffix = input.dataset.suffix || "";
+                view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
+                state[inputId] = input.value; // zapisujemy surową liczbę (bez "cm")
+            };
+            
+            renderValue(); // ustaw na start
+            
+            input.addEventListener("input", () => {
+                renderValue();
+                scheduleSave();
+            });
+            
+            input.addEventListener("focus", () => input.select());
+        }
+
+
+        // 3) Zapisywanie do localStorage (z prostym „debounce”)
+        let saveTimer = null;
+        function scheduleSave() {
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+            localStorage.setItem(LS_KEY, JSON.stringify(state));
+            }, 150);
+        }
+
+        // 4) Kopiowanie całego opisu
+        document.getElementById("copy").addEventListener("click", async () => {
+            const pre = document.querySelector(".card + p, .card pre") // zabezpieczenie
+            ? document.querySelector(".card pre")
+            : document.querySelector("pre");
+            const text = pre.innerText;
+            try {
+            await navigator.clipboard.writeText(text);
+            const btn = document.getElementById("copy");
+            const old = btn.textContent;
+            btn.textContent = "Skopiowano ✓";
+            setTimeout(()=> btn.textContent = old, 1200);
+            } catch {
+            alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
+            }
+        });
+
+        // 5) Dodatkowo: zapisz stan przy zamykaniu karty (na wszelki wypadek)
+        window.addEventListener("beforeunload", () => {
+            localStorage.setItem(LS_KEY, JSON.stringify(state));
+        });
+    </script>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js?v=11');
+      }
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Szablonopis</title>
+    <link rel="manifest" href="manifest.webmanifest?v=11">
+    <meta name="theme-color" content="#0b0b0c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="icon-192.png">
+  <style>
     :root { color-scheme: light dark; }
     body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #0b0b0c; color: #e9e9ea; }
     .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
@@ -234,6 +494,7 @@
 
 </body>
 </html>
+
 
 
 
