@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Szablonopis</title>
-    <link rel="manifest" href="manifest.webmanifest?v=17">
+    <link rel="manifest" href="manifest.webmanifest?v=18">
     <meta name="theme-color" content="#0b0b0c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -95,6 +95,16 @@
                     <option value="Żółty">Żółty</option>
                   </select>
             </label><br><br>
+
+            <label>
+              <input type="checkbox" id="uwagiOn">
+              Dodatkowa linijka?
+            </label><br><br>
+            
+            <label id="uwagiLabel" style="display:none">
+              Treść dodatkowej informacji...<br>
+              <input id="uwagiText" placeholder="...">
+            </label><br><br>
             
             <label>Długość całkowita (cm)<br>
               <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
@@ -117,6 +127,7 @@
 🌟 Stan: <b><span id="v-stan"></span></b>
 👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
 🎨 Kolor: <b><span id="v-kolor"></span></b>
+<span id="v-uwagi-wrap" style="display:none"><br>👕 <span id="v-uwagi"></span></span>
 
 📏 Wymiary:
 • Długość całkowita: <b><span id="v-dlugosc">65cm</span></b>
@@ -147,6 +158,45 @@
 
         // 1) Wczytaj zapisane wartości (jeśli są)
         const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+
+        const uwagiOn    = document.getElementById("uwagiOn");
+        const uwagiText  = document.getElementById("uwagiText");
+        const uwagiWrap  = document.getElementById("v-uwagi-wrap");
+        const uwagiSpan  = document.getElementById("v-uwagi");
+        const uwagiLabel = document.getElementById("uwagiLabel");
+        
+        // Przywróć zapisane ustawienia (jeśli były)
+        if (saved.uwagiOn) uwagiOn.checked = true;
+        if (saved.uwagiText) uwagiText.value = saved.uwagiText;
+        
+        // Funkcja renderująca opcjonalną linijkę
+        function renderUwagi() {
+          const enabled = uwagiOn.checked;
+          const txt = (uwagiText.value || "").trim();
+        
+          // zapis do stanu (żeby poszło do localStorage)
+          state.uwagiOn = enabled;
+          state.uwagiText = uwagiText.value || "";
+        
+          // UI formularza: pokaż/ukryj pole tekstowe
+          uwagiLabel.style.display = enabled ? "block" : "none";
+        
+          // Podgląd i kopiowanie: pokaż/ukryj linijkę
+          if (enabled && txt) {
+            uwagiSpan.textContent = txt;
+            uwagiWrap.style.display = "inline";
+          } else {
+            uwagiSpan.textContent = "";
+            uwagiWrap.style.display = "none";
+          }
+        }
+        
+        // Nasłuch na przełącznik i pole tekstowe
+        uwagiOn.addEventListener("change", () => { renderUwagi(); scheduleSave(); });
+        uwagiText.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
+        
+        // Ustaw stan przy pierwszym uruchomieniu
+        renderUwagi();
 
         // 2) Połącz pola z podglądem + inicjalizacja z localStorage
         const state = {};
@@ -215,6 +265,7 @@
 
 </body>
 </html>
+
 
 
 
