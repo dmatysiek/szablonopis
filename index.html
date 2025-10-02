@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Szablonopis</title>
-    <link rel="manifest" href="manifest.webmanifest?v=15">
+    <link rel="manifest" href="manifest.webmanifest?v=16">
     <meta name="theme-color" content="#0b0b0c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -17,6 +17,28 @@
     .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
     pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font: inherit; }
     .hint { opacity: .8; font-size: 13px; margin-top: 10px; }
+
+    select,
+    input[type="number"] {
+      font-size: 17px;       /* + wygodniejsze na iOS i bez auto-zooma */
+      line-height: 1.3;
+      height: 44px;          /* minimalnie wyższe */
+      padding: 8px 10px;     /* ciut większe, ale bez zmiany wyglądu */
+      box-sizing: border-box;
+    }
+    
+    /* biały tekst w ZAMKNIĘTYM select (iOS Safari) */
+    select {
+      color: #e9e9ea;
+      -webkit-text-fill-color: #e9e9ea; /* kluczowe dla iOS */
+    }
+    
+    /* to działa na desktopie/Androidzie w rozwijanej liście;
+       iOS i tak użyje systemowego picker’a (tego nie da się wymusić na ciemny) */
+    select option {
+      color: #e9e9ea;
+      background: #0b0b0c;
+    }
   </style>
 </head>
 <body>
@@ -185,12 +207,13 @@
 
     <script>
       if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=15');
+        navigator.serviceWorker.register('./sw.js?v=16');
       }
     </script>
 
 </body>
 </html>
+
 
 
 
