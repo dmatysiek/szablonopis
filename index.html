@@ -1,15 +1,18 @@
 <!doctype html>
 <html lang="pl">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Szablonopis</title>
-    <link rel="manifest" href="manifest.webmanifest?v=11">
-    <meta name="theme-color" content="#0b0b0c">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="icon-192.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Szablonopis</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest?v=13">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="icon-192.png">
+
   <style>
-    /* Minimalny,  schludny styl */
+    /* Minimalny, schludny styl */
     :root { color-scheme: light dark; }
     body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #0b0b0c; color: #e9e9ea; }
     .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
@@ -18,12 +21,15 @@
     pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font: inherit; }
     .hint { opacity: .8; font-size: 13px; margin-top: 10px; }
 
+    /* --- ładniejsze kontrolki (prawa strona) --- */
+    .right-title { text-align:right; }
+    .right-side { margin-left:auto; } /* blok formularza „przyklejony” do prawej */
+
     .card.right-side label { 
       display:block; 
       margin-bottom:12px; 
       text-align:right;             /* etykiety po prawej */
     }
-    
     .card.right-side input,
     .card.right-side select {
       width:100%;
@@ -32,118 +38,109 @@
       border-radius:12px;
       border:1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.06);
-      color:#e9e9ea;                /* kolor tekstu */
-      -webkit-text-fill-color:#e9e9ea; /* iOS Safari – tekst na biało */
+      color:#e9e9ea;                   /* kolor tekstu */
+      -webkit-text-fill-color:#e9e9ea; /* iOS Safari – tekst na biało (zamknięty select) */
       outline:none;
       font-size:16px;
       line-height:1.2;
-      height:44px;                  /* większy tap-target */
-      text-align:right;             /* wpisy po prawej */
-      appearance:none;              /* ujednolicenie wyglądu */
+      height:44px;                     /* większy tap-target */
+      text-align:right;                /* wpisy po prawej */
+      appearance:none;                 /* ujednolicenie wyglądu */
       -webkit-appearance:none;
     }
-    
     .card.right-side input::placeholder {
       color: rgba(233,233,234,.55);
       text-align:right;
     }
-    
-    /* select – strzałka ma trochę miejsca po prawej */
-    .card.right-side select { padding-right:34px; }
-    
-    /* delikatny efekt focusa */
+    .card.right-side select { padding-right:34px; } /* miejsce na strzałkę */
     .card.right-side input:focus,
     .card.right-side select:focus {
       border-color: rgba(255,255,255,.35);
       box-shadow: 0 0 0 3px rgba(255,255,255,.12);
     }
-    
-    /* biała czcionka również dla <option> (widoczna w zamkniętym selectcie) */
-    .card.right-side select option {
-      color:#e9e9ea;
+    .card.right-side select option { color:#e9e9ea; } /* kolor wartości wyświetlanej (dropdown iOS pozostaje systemowy) */
+
+    /* mały kwadracik z kolorem (UI-only, nie wchodzi do opisu) */
+    .swatch{
+      display:inline-block; width:14px; height:14px; margin-left:8px;
+      border-radius:3px; border:1px solid rgba(255,255,255,.35); vertical-align:middle;
     }
-    
-    /* tytuł formularza wyrównany do prawej */
-    .right-title { text-align:right; }
-    
-    /* cały blok formularza „przyklej” do prawej krawędzi kontenera */
-    .right-side { margin-left:auto; }
-    
-    /* odstępy między polami (bo usunęliśmy część <br>) – opcjonalnie możesz zostawić swoje <br> */
-    .card.right-side label + label { margin-top:10px; }
-
   </style>
 </head>
 <body>
 
   <div class="wrap">
-        <div class="card right-side" style="margin-bottom:16px">
-            
-            <label>Stan<br>
-              <select id="stan">
-                <option value="Dobry">Dobry</option>
-                <option value="Bardzo dobry" selected>Bardzo dobry</option>
-                <option value="Nowy bez metki">Nowy bez metki</option>
-                <option value="Nowy z metką">Nowy z metką</option>
-                <option value="Świetny, jak nowy">Świetny, jak nowy</option>
-              </select>
-            </label><br><br>
+    <h1 class="right-title">Uzupełnij dane</h1>
 
-            <label>Rozmiar<br>
-                <select id="rozmiar">
-                    <option value="XS">XS</option>
-                    <option value="S" selected>S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="Damski XS">Damski XS</option>
-                    <option value="Damski S">Damski S</option>
-                    <option value="Damski M">Damski M</option>
-                    <option value="Damski L">Damski L</option>
-                    <option value="Damski XL">Damski XL</option>
-                    <option value="Męski XS">Męski XS</option>
-                    <option value="Męski S">Męski S</option>
-                    <option value="Męski M">Męski M</option>
-                    <option value="Męski L">Męski L</option>
-                    <option value="Męski XL">Męski XL</option>
-                  </select>
-            </label><br><br>
-            
-            <label>Kolor<br>
-                <select id="kolor">
-                    <option value="Czarny" selected>Czarny</option>
-                    <option value="Biały">Biały</option>
-                    <option value="Szary">Szary</option>
-                    <option value="Brązowy">Brązowy</option>
-                    <option value="Niebieski">Niebieski</option>
-                    <option value="Granatowy">Granatowy</option>
-                    <option value="Zielony">Zielony</option>
-                    <option value="Burgundowy">Burgundowy</option>
-                    <option value="Fioletowy">Fioletowy</option>
-                    <option value="Czerwony">Czerwony</option>
-                    <option value="Beżowy">Beżowy</option>
-                    <option value="Kremowy">Kremowy</option>
-                    <option value="Różowy">Różowy</option>
-                    <option value="Żółty">Żółty</option>
-                  </select>
-            </label><br><br>
-            
-            <label>Długość całkowita (cm)<br>
-              <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
-            </label><br><br>
-            
-            <label>Szerokość pod pachami (cm)<br>
-              <input id="szerokosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
-            </label><br><br>
-            
-            <label>Długość od pachy do końca rękawa (cm)<br>
-              <input id="rekaw" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
-            </label>
+    <!-- FORMULARZ: wyrównany do prawej -->
+    <div class="card right-side" style="margin-bottom:16px">
+      <label>Stan<br>
+        <select id="stan">
+          <option value="Dobry">Dobry</option>
+          <option value="Bardzo dobry" selected>Bardzo dobry</option>
+          <option value="Nowy bez metki">Nowy bez metki</option>
+          <option value="Nowy z metką">Nowy z metką</option>
+          <option value="Świetny, jak nowy">Świetny, jak nowy</option>
+        </select>
+      </label>
 
-        </div>
+      <label>Rozmiar<br>
+        <select id="rozmiar">
+          <option value="XS">XS</option>
+          <option value="S" selected>S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="Damski XS">Damski XS</option>
+          <option value="Damski S">Damski S</option>
+          <option value="Damski M">Damski M</option>
+          <option value="Damski L">Damski L</option>
+          <option value="Damski XL">Damski XL</option>
+          <option value="Męski XS">Męski XS</option>
+          <option value="Męski S">Męski S</option>
+          <option value="Męski M">Męski M</option>
+          <option value="Męski L">Męski L</option>
+          <option value="Męski XL">Męski XL</option>
+        </select>
+      </label>
+
+      <label>Kolor<br>
+        <select id="kolor">
+          <option value="Czarny" selected>Czarny</option>
+          <option value="Biały">Biały</option>
+          <option value="Szary">Szary</option>
+          <option value="Brązowy">Brązowy</option>
+          <option value="Niebieski">Niebieski</option>
+          <option value="Granatowy">Granatowy</option>
+          <option value="Zielony">Zielony</option>
+          <option value="Burgundowy">Burgundowy</option>
+          <option value="Fioletowy">Fioletowy</option>
+          <option value="Czerwony">Czerwony</option>
+          <option value="Beżowy">Beżowy</option>
+          <option value="Kremowy">Kremowy</option>
+          <option value="Różowy">Różowy</option>
+          <option value="Żółty">Żółty</option>
+        </select>
+        <span id="kolor-swatch" class="swatch" aria-hidden="true"></span>
+      </label>
+
+      <label>Długość całkowita (cm)<br>
+        <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
+      </label>
+
+      <label>Szerokość pod pachami (cm)<br>
+        <input id="szerokosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
+      </label>
+
+      <label>Długość od pachy do końca rękawa (cm)<br>
+        <input id="rekaw" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
+      </label>
+    </div>
+
+    <!-- PODGLĄD: zostaje „po lewej” i bez zmian w wyrównaniu -->
     <h1>Podgląd opisu</h1>
     <div class="card">
-        <pre>
+<pre>
 🌟 Stan: <b><span id="v-stan"></span></b>
 👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
 🎨 Kolor: <b><span id="v-kolor"></span></b>
@@ -155,356 +152,132 @@
 
 📩 Więcej informacji na priv 😊
 
+
 #Nike #bluza #kaptur #męska #damska #man #woman #hoodie #crewneck #sweatshirt #vintage #unisex #swoosh #air #max #adidas #retro #zipped #oversize #y2k
-        </pre>
-        <button id="copy" style="margin-top:12px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08); color:inherit; font-weight:600; cursor:pointer">Kopiuj opis</button>
+</pre>
+      <button id="copy" style="margin-top:12px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08); color:inherit; font-weight:600; cursor:pointer">Kopiuj opis</button>
     </div>
   </div>
 
-    <script>
-        // KLUCZ w localStorage
-        const LS_KEY = "szablonopis_v1";
+  <!-- SKRYPT: powiązania pól, zapamiętywanie, swatch, kopiowanie -->
+  <script>
+    // ===== Stałe i konfiguracja =====
+    const LS_KEY = "szablonopis_v12"; // podbijaj przy większych zmianach
 
-        // Mapowanie pól formularza -> miejsc w podglądzie
-        const pairs = [
-            ["stan", "v-stan"],
-            ["rozmiar", "v-rozmiar"],
-            ["kolor", "v-kolor"],
-            ["dlugosc", "v-dlugosc"],
-            ["szerokosc", "v-szerokosc"],
-            ["rekaw", "v-rekaw"],
-        ];
+    // Mapowanie pól formularza -> miejsc w podglądzie
+    const pairs = [
+      ["stan", "v-stan"],
+      ["rozmiar", "v-rozmiar"],
+      ["kolor", "v-kolor"],
+      ["dlugosc", "v-dlugosc"],
+      ["szerokosc", "v-szerokosc"],
+      ["rekaw", "v-rekaw"],
+    ];
 
-        // 1) Wczytaj zapisane wartości (jeśli są)
-        const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+    // Mapa kolorów do próbnika (UI-only)
+    const COLOR_MAP = {
+      "Czarny": "#111111",
+      "Biały": "#F5F5F5",
+      "Szary": "#8E8E93",
+      "Brązowy": "#8B5A2B",
+      "Niebieski": "#1E90FF",
+      "Granatowy": "#001F3F",
+      "Zielony": "#2ECC40",
+      "Burgundowy": "#800020",
+      "Fioletowy": "#7D3C98",
+      "Czerwony": "#E74C3C",
+      "Beżowy": "#DCC7A1",
+      "Kremowy": "#F3E5AB",
+      "Różowy": "#FF6FB5",
+      "Żółty": "#F1C40F"
+    };
 
-        // 2) Połącz pola z podglądem + inicjalizacja z localStorage
-        const state = {};
-        for (const [inputId, viewId] of pairs) {
-            const input = document.getElementById(inputId);
-            const view  = document.getElementById(viewId);
-            
-            if (saved[inputId]) input.value = saved[inputId];
-            
-            // funkcja formatująca: jeśli ma data-suffix, dołóż np. "cm"
-            const renderValue = () => {
-                const raw = input.value?.toString().trim();
-                const suffix = input.dataset.suffix || "";
-                view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
-                state[inputId] = input.value; // zapisujemy surową liczbę (bez "cm")
-            };
-            
-            renderValue(); // ustaw na start
-            
-            input.addEventListener("input", () => {
-                renderValue();
-                scheduleSave();
-            });
-            
-            input.addEventListener("focus", () => input.select());
-        }
+    // ===== Odczyt zapisanych wartości =====
+    const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
 
+    // ===== Stan i zapisywanie =====
+    const state = {};
+    let saveTimer = null;
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        localStorage.setItem(LS_KEY, JSON.stringify(state));
+      }, 150);
+    }
 
-        // 3) Zapisywanie do localStorage (z prostym „debounce”)
-        let saveTimer = null;
-        function scheduleSave() {
-            clearTimeout(saveTimer);
-            saveTimer = setTimeout(() => {
-            localStorage.setItem(LS_KEY, JSON.stringify(state));
-            }, 150);
-        }
+    // ===== Inicjalizacja pól i podglądu =====
+    const kolorSwatch = document.getElementById("kolor-swatch"); // może nie istnieć — to OK
 
-        // 4) Kopiowanie całego opisu
-        document.getElementById("copy").addEventListener("click", async () => {
-            const pre = document.querySelector(".card + p, .card pre") // zabezpieczenie
-            ? document.querySelector(".card pre")
-            : document.querySelector("pre");
-            const text = pre.innerText;
-            try {
-            await navigator.clipboard.writeText(text);
-            const btn = document.getElementById("copy");
-            const old = btn.textContent;
-            btn.textContent = "Skopiowano ✓";
-            setTimeout(()=> btn.textContent = old, 1200);
-            } catch {
-            alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
-            }
-        });
+    for (const [inputId, viewId] of pairs) {
+      const input = document.getElementById(inputId);
+      const view  = document.getElementById(viewId);
+      if (!input || !view) continue;
 
-        // 5) Dodatkowo: zapisz stan przy zamykaniu karty (na wszelki wypadek)
-        window.addEventListener("beforeunload", () => {
-            localStorage.setItem(LS_KEY, JSON.stringify(state));
-        });
-    </script>
+      // Przywróć zapisane wartości
+      if (saved[inputId] !== undefined) input.value = saved[inputId];
 
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=11');
-      }
-    </script>
-
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!doctype html>
-<html lang="pl">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Szablonopis</title>
-    <link rel="manifest" href="manifest.webmanifest?v=11">
-    <meta name="theme-color" content="#0b0b0c">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="icon-192.png">
-  <style>
-    :root { color-scheme: light dark; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #0b0b0c; color: #e9e9ea; }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
-    h1 { font-size: 20px; margin: 0 0 16px; font-weight: 600; }
-    .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-    pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font: inherit; }
-    .hint { opacity: .8; font-size: 13px; margin-top: 10px; }
-    .swatch{display:inline-block; width:14px; height:14px; margin-left:8px;border-radius:3px; border:1px solid rgba(255,255,255,.35); vertical-align:middle;}
-
-  </style>
-</head>
-<body>
-
-  <div class="wrap">
-    <h1>Uzupełnij dane</h1>
-        <div class="card" style="margin-bottom:16px">
-            
-            <label>Stan<br>
-              <select id="stan">
-                <option value="Dobry">Dobry</option>
-                <option value="Bardzo dobry" selected>Bardzo dobry</option>
-                <option value="Nowy bez metki">Nowy bez metki</option>
-                <option value="Nowy z metką">Nowy z metką</option>
-                <option value="Świetny, jak nowy">Świetny, jak nowy</option>
-              </select>
-            </label><br><br>
-
-            <label>Rozmiar<br>
-                <select id="rozmiar">
-                    <option value="XS">XS</option>
-                    <option value="S" selected>S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="Damski XS">Damski XS</option>
-                    <option value="Damski S">Damski S</option>
-                    <option value="Damski M">Damski M</option>
-                    <option value="Damski L">Damski L</option>
-                    <option value="Damski XL">Damski XL</option>
-                    <option value="Męski XS">Męski XS</option>
-                    <option value="Męski S">Męski S</option>
-                    <option value="Męski M">Męski M</option>
-                    <option value="Męski L">Męski L</option>
-                    <option value="Męski XL">Męski XL</option>
-                  </select>
-            </label><br><br>
-            
-            <label>Kolor<br>
-                <select id="kolor">
-                    <option value="Czarny" selected>Czarny</option>
-                    <option value="Biały">Biały</option>
-                    <option value="Szary">Szary</option>
-                    <option value="Brązowy">Brązowy</option>
-                    <option value="Niebieski">Niebieski</option>
-                    <option value="Granatowy">Granatowy</option>
-                    <option value="Zielony">Zielony</option>
-                    <option value="Burgundowy">Burgundowy</option>
-                    <option value="Fioletowy">Fioletowy</option>
-                    <option value="Czerwony">Czerwony</option>
-                    <option value="Beżowy">Beżowy</option>
-                    <option value="Kremowy">Kremowy</option>
-                    <option value="Różowy">Różowy</option>
-                    <option value="Żółty">Żółty</option>
-                  </select>
-                  <span id="kolor-swatch" class="swatch" aria-hidden="true"></span>
-            </label><br><br>
-            
-            <label>Długość całkowita (cm)<br>
-              <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
-            </label><br><br>
-            
-            <label>Szerokość pod pachami (cm)<br>
-              <input id="szerokosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
-            </label><br><br>
-            
-            <label>Długość od pachy do końca rękawa (cm)<br>
-              <input id="rekaw" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
-            </label>
-
-        </div>
-    <h1>Podgląd opisu</h1>
-    <div class="card">
-        <pre>
-🌟 Stan: <b><span id="v-stan"></span></b>
-👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
-🎨 Kolor: <b><span id="v-kolor"></span></b>
-
-📏 Wymiary:
-• Długość całkowita: <b><span id="v-dlugosc">65cm</span></b>
-• Szerokość pod pachami: <b><span id="v-szerokosc">56cm</span></b>
-• Długość od pachy do końca rękawa: <b><span id="v-rekaw">52cm</span></b>
-
-📩 Więcej informacji na priv 😊
-
-#Nike #bluza #kaptur #męska #damska #man #woman #hoodie #crewneck #sweatshirt #vintage #unisex #swoosh #air #max #adidas #retro #zipped #oversize #y2k
-        </pre>
-        <button id="copy" style="margin-top:12px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08); color:inherit; font-weight:600; cursor:pointer">Kopiuj opis</button>
-    </div>
-  </div>
-
-    <script>
-      // ===== Stałe i konfiguracja =====
-      const LS_KEY = "szablonopis_v11";
-    
-      // Mapowanie pól formularza -> miejsc w podglądzie
-      const pairs = [
-        ["stan", "v-stan"],
-        ["rozmiar", "v-rozmiar"],
-        ["kolor", "v-kolor"],
-        ["dlugosc", "v-dlugosc"],
-        ["szerokosc", "v-szerokosc"],
-        ["rekaw", "v-rekaw"],
-      ];
-    
-      // Mapa kolorów do próbnika (UI-only)
-      const COLOR_MAP = {
-        "Czarny": "#111111",
-        "Biały": "#F5F5F5",
-        "Szary": "#8E8E93",
-        "Brązowy": "#8B5A2B",
-        "Niebieski": "#1E90FF",
-        "Granatowy": "#001F3F",
-        "Zielony": "#2ECC40",
-        "Burgundowy": "#800020",
-        "Fioletowy": "#7D3C98",
-        "Czerwony": "#E74C3C",
-        "Beżowy": "#DCC7A1",
-        "Kremowy": "#F3E5AB",
-        "Różowy": "#FF6FB5",
-        "Żółty": "#F1C40F"
+      // Funkcja formatująca widok (dodaje "cm" jeśli jest data-suffix)
+      const renderValue = () => {
+        const raw = (input.value ?? "").toString().trim();
+        const suffix = input.dataset.suffix || "";
+        view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
+        state[inputId] = input.value; // w stanie trzymamy surową wartość
       };
-    
-      // ===== Odczyt zapisanych wartości =====
-      const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
-    
-      // ===== Stan i zapisywanie =====
-      const state = {};
-      let saveTimer = null;
-      function scheduleSave() {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => {
-          localStorage.setItem(LS_KEY, JSON.stringify(state));
-        }, 150);
-      }
-    
-      // ===== Inicjalizacja pól i podglądu =====
-      const kolorSwatch = document.getElementById("kolor-swatch"); // może nie istnieć — to OK
-    
-      for (const [inputId, viewId] of pairs) {
-        const input = document.getElementById(inputId);
-        const view  = document.getElementById(viewId);
-    
-        if (!input || !view) continue;
-    
-        // Przywróć zapisane wartości
-        if (saved[inputId] !== undefined) {
-          input.value = saved[inputId];
-        }
-    
-        // Funkcja formatująca widok (dodaje "cm" jeśli jest data-suffix)
-        const renderValue = () => {
-          const raw = (input.value ?? "").toString().trim();
-          const suffix = input.dataset.suffix || "";
-          view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
-          state[inputId] = input.value; // w stanie trzymamy surową wartość
-        };
-    
-        // UI-only: aktualizacja próbnika koloru
-        const updateSwatch = () => {
-          if (inputId !== "kolor" || !kolorSwatch) return;
-          const hex = COLOR_MAP[input.value] || "transparent";
-          kolorSwatch.style.background = hex;
-          // lepsza ramka dla jasnych kolorów
-          const jasne = ["Biały","Kremowy","Beżowy","Żółty"];
-          kolorSwatch.style.borderColor = jasne.includes(input.value)
-            ? "rgba(0,0,0,.35)"
-            : "rgba(255,255,255,.35)";
-        };
-    
-        // Ustaw na start
+
+      // UI-only: aktualizacja próbnika koloru
+      const updateSwatch = () => {
+        if (inputId !== "kolor" || !kolorSwatch) return;
+        const hex = COLOR_MAP[input.value] || "transparent";
+        kolorSwatch.style.background = hex;
+        const jasne = ["Biały","Kremowy","Beżowy","Żółty"];
+        kolorSwatch.style.borderColor = jasne.includes(input.value)
+          ? "rgba(0,0,0,.35)" : "rgba(255,255,255,.35)";
+      };
+
+      // Ustaw na start
+      renderValue();
+      updateSwatch();
+
+      // Aktualizacje podczas wpisywania/wyboru
+      input.addEventListener("input", () => {
         renderValue();
         updateSwatch();
-    
-        // Aktualizacje podczas wpisywania/wyboru
-        input.addEventListener("input", () => {
-          renderValue();
-          updateSwatch();
-          scheduleSave();
-        });
-    
-        // Ułatwienie edycji: zaznacz całość po fokusie (dla inputów)
-        input.addEventListener("focus", () => {
-          if (input.select) input.select();
-        });
-      }
-    
-      // ===== Kopiowanie całego opisu (tylko <pre>) =====
-      document.getElementById("copy")?.addEventListener("click", async () => {
-        // wybierz <pre> z podglądu (druga karta .card ma <pre>)
-        const pres = document.querySelectorAll(".card pre");
-        const pre = pres[pres.length - 1] || document.querySelector("pre");
-        const text = pre ? pre.innerText : "";
-    
-        try {
-          await navigator.clipboard.writeText(text);
-          const btn = document.getElementById("copy");
-          if (btn) {
-            const old = btn.textContent;
-            btn.textContent = "Skopiowano ✓";
-            setTimeout(() => (btn.textContent = old), 1200);
-          }
-        } catch {
-          alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
+        scheduleSave();
+      });
+
+      // Ułatwienie edycji: zaznacz całość po fokusie (dla inputów)
+      input.addEventListener("focus", () => { if (input.select) input.select(); });
+    }
+
+    // ===== Kopiowanie całego opisu (tylko <pre>) =====
+    document.getElementById("copy")?.addEventListener("click", async () => {
+      const pres = document.querySelectorAll(".card pre");
+      const pre = pres[pres.length - 1] || document.querySelector("pre");
+      const text = pre ? pre.innerText : "";
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = document.getElementById("copy");
+        if (btn) {
+          const old = btn.textContent;
+          btn.textContent = "Skopiowano ✓";
+          setTimeout(() => (btn.textContent = old), 1200);
         }
-      });
-    
-      // ===== Zapisz stan przy zamykaniu karty =====
-      window.addEventListener("beforeunload", () => {
-        localStorage.setItem(LS_KEY, JSON.stringify(state));
-      });
-    </script>
+      } catch {
+        alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
+      }
+    });
 
+    // ===== Zapisz stan przy zamykaniu karty =====
+    window.addEventListener("beforeunload", () => {
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    });
+  </script>
 
+  <!-- Rejestracja service workera (podbijaj ?v=… przy aktualizacjach) -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js?v=13');
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
