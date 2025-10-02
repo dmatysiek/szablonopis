@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="pl">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Szablonopis</title>
-    <link rel="manifest" href="manifest.webmanifest?v=20">
-    <meta name="theme-color" content="#0b0b0c">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <link rel="apple-touch-icon" href="icon-192.png">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Szablonopis</title>
+  <link rel="manifest" href="manifest.webmanifest?v=22">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="icon-192.png">
   <style>
     /* Minimalny,  schludny styl */
     :root { color-scheme: light dark; }
@@ -18,117 +18,122 @@
     pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font: inherit; }
     .hint { opacity: .8; font-size: 13px; margin-top: 10px; }
 
+    /* spójne pola – minimalnie większe */
     select,
     input[type="number"],
-    input[type="checkbox"] {
-      font-size: 16px;       /* + wygodniejsze na iOS i bez auto-zooma */
+    input[type="text"] {
+      font-size: 16px;
       line-height: 1.3;
-      height: 40px;          /* minimalnie wyższe */
-      padding: 8px 10px;     /* ciut większe, ale bez zmiany wyglądu */
+      height: 40px;
+      padding: 8px 10px;
       box-sizing: border-box;
       border-radius: 3px;
     }
-    
-    /* biały tekst w ZAMKNIĘTYM select (iOS Safari) */
-    select {
-      color: #e9e9ea;
-      -webkit-text-fill-color: #e9e9ea; /* kluczowe dla iOS */
+
+    /* checkbox w linii z tekstem */
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 0 10px; /* 1 odstęp, zamiast <br><br> */
     }
-    
-    /* to działa na desktopie/Androidzie w rozwijanej liście;
-       iOS i tak użyje systemowego picker’a (tego nie da się wymusić na ciemny) */
-    select option {
-      color: #e9e9ea;
-      background: #0b0b0c;
+    .checkbox-row input[type="checkbox"]{
+      width: 18px; height: 18px; margin: 0;
     }
+
+    /* biały tekst w zamkniętym select (iOS) */
+    select { color:#e9e9ea; -webkit-text-fill-color:#e9e9ea; }
+    /* desktop/Android – dropdown ciemny; iOS i tak użyje systemowego pickera */
+    select option { color:#e9e9ea; background:#0b0b0c; }
   </style>
 </head>
 <body>
 
   <div class="wrap">
-        <div class="card" style="margin-bottom:16px">
-            
-            <label>Stan<br>
-              <select id="stan">
-                <option value="Dobry">Dobry</option>
-                <option value="Bardzo dobry" selected>Bardzo dobry</option>
-                <option value="Nowy bez metki">Nowy bez metki</option>
-                <option value="Nowy z metką">Nowy z metką</option>
-                <option value="Świetny, jak nowy">Świetny, jak nowy</option>
-              </select>
-            </label><br><br>
+    <div class="card" style="margin-bottom:16px">
 
-            <label>Rozmiar<br>
-                <select id="rozmiar">
-                    <option value="XS">XS</option>
-                    <option value="S" selected>S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="Damski XS">Damski XS</option>
-                    <option value="Damski S">Damski S</option>
-                    <option value="Damski M">Damski M</option>
-                    <option value="Damski L">Damski L</option>
-                    <option value="Damski XL">Damski XL</option>
-                    <option value="Męski XS">Męski XS</option>
-                    <option value="Męski S">Męski S</option>
-                    <option value="Męski M">Męski M</option>
-                    <option value="Męski L">Męski L</option>
-                    <option value="Męski XL">Męski XL</option>
-                  </select>
-            </label><br><br>
-            
-            <label>Kolor<br>
-                <select id="kolor">
-                    <option value="Czarny" selected>Czarny</option>
-                    <option value="Biały">Biały</option>
-                    <option value="Szary">Szary</option>
-                    <option value="Brązowy">Brązowy</option>
-                    <option value="Niebieski">Niebieski</option>
-                    <option value="Granatowy">Granatowy</option>
-                    <option value="Zielony">Zielony</option>
-                    <option value="Burgundowy">Burgundowy</option>
-                    <option value="Fioletowy">Fioletowy</option>
-                    <option value="Czerwony">Czerwony</option>
-                    <option value="Beżowy">Beżowy</option>
-                    <option value="Kremowy">Kremowy</option>
-                    <option value="Różowy">Różowy</option>
-                    <option value="Żółty">Żółty</option>
-                  </select>
-            </label><br><br>
+      <label>Stan<br>
+        <select id="stan">
+          <option value="Dobry">Dobry</option>
+          <option value="Bardzo dobry" selected>Bardzo dobry</option>
+          <option value="Nowy bez metki">Nowy bez metki</option>
+          <option value="Nowy z metką">Nowy z metką</option>
+          <option value="Świetny, jak nowy">Świetny, jak nowy</option>
+        </select>
+      </label><br><br>
 
-            <label>
-              <input type="checkbox" id="uwagiOn">
-              Dodatkowa linijka?
-            </label><br><br>
-            
-            <label id="uwagiLabel" style="display:none">
-              Treść dodatkowej informacji...<br>
-              <input id="uwagiText" placeholder="...">
-            </label><br>
-            
-            <label>Długość całkowita (cm)<br>
-              <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
-            </label><br><br>
-            
-            <label>Szerokość pod pachami (cm)<br>
-              <input id="szerokosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
-            </label><br><br>
-            
-            <label>Długość od pachy do końca rękawa (cm)<br>
-              <input id="rekaw" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
-            </label>
+      <label>Rozmiar<br>
+        <select id="rozmiar">
+          <option value="XS">XS</option>
+          <option value="S" selected>S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
+          <option value="Damski XS">Damski XS</option>
+          <option value="Damski S">Damski S</option>
+          <option value="Damski M">Damski M</option>
+          <option value="Damski L">Damski L</option>
+          <option value="Damski XL">Damski XL</option>
+          <option value="Męski XS">Męski XS</option>
+          <option value="Męski S">Męski S</option>
+          <option value="Męski M">Męski M</option>
+          <option value="Męski L">Męski L</option>
+          <option value="Męski XL">Męski XL</option>
+        </select>
+      </label><br><br>
 
-        </div>
+      <label>Kolor<br>
+        <select id="kolor">
+          <option value="Czarny" selected>Czarny</option>
+          <option value="Biały">Biały</option>
+          <option value="Szary">Szary</option>
+          <option value="Brązowy">Brązowy</option>
+          <option value="Niebieski">Niebieski</option>
+          <option value="Granatowy">Granatowy</option>
+          <option value="Zielony">Zielony</option>
+          <option value="Burgundowy">Burgundowy</option>
+          <option value="Fioletowy">Fioletowy</option>
+          <option value="Czerwony">Czerwony</option>
+          <option value="Beżowy">Beżowy</option>
+          <option value="Kremowy">Kremowy</option>
+          <option value="Różowy">Różowy</option>
+          <option value="Żółty">Żółty</option>
+        </select>
+      </label><br><br>
+
+      <!-- PRZEŁĄCZNIK – równe wyrównanie -->
+      <label class="checkbox-row">
+        <input type="checkbox" id="uwagiOn">
+        Dodatkowa linijka?
+      </label>
+
+      <!-- POLE – ta sama wysokość/czcionka co reszta -->
+      <label id="uwagiLabel" style="display:none; margin:0 0 10px">
+        Treść dodatkowej informacji...<br>
+        <input id="uwagiText" type="text" placeholder="np. Bluza ma plamę na rękawie">
+      </label><br><br>
+
+      <label>Długość całkowita (cm)<br>
+        <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
+      </label><br><br>
+
+      <label>Szerokość pod pachami (cm)<br>
+        <input id="szerokosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
+      </label><br><br>
+
+      <label>Długość od pachy do końca rękawa (cm)<br>
+        <input id="rekaw" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
+      </label>
+
+    </div>
 
     <hr />
-      
+
     <div class="card">
-        <pre>
+<pre>
 🌟 Stan: <b><span id="v-stan"></span></b>
 👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
-🎨 Kolor: <b><span id="v-kolor"></span></b>
-<span id="v-uwagi-wrap" style="display:none"><br>👕 <span id="v-uwagi"></span></span>
+🎨 Kolor: <b><span id="v-kolor"></span></b><span id="v-uwagi-wrap" style="display:none"><br>👕 <span id="v-uwagi"></span></span>
 
 📏 Wymiary:
 • Długość całkowita: <b><span id="v-dlugosc">65cm</span></b>
@@ -138,153 +143,132 @@
 📩 Więcej informacji na priv 😊
 
 #Nike #bluza #kaptur #męska #damska #man #woman #hoodie #crewneck #sweatshirt #vintage #unisex #swoosh #air #max #adidas #retro #zipped #oversize #y2k
-        </pre>
-        <button id="copy" style="margin-top:12px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08); color:inherit; font-weight:600; cursor:pointer">Kopiuj opis</button>
+</pre>
+      <button id="copy" style="margin-top:12px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08); color:inherit; font-weight:600; cursor:pointer">Kopiuj opis</button>
     </div>
   </div>
 
-    <script>
-      // KLUCZ w localStorage
-      const LS_KEY = "szablonopis_v1";
-    
-      // Mapowanie pól formularza -> miejsc w podglądzie
-      const pairs = [
-        ["stan", "v-stan"],
-        ["rozmiar", "v-rozmiar"],
-        ["kolor", "v-kolor"],
-        ["dlugosc", "v-dlugosc"],
-        ["szerokosc", "v-szerokosc"],
-        ["rekaw", "v-rekaw"],
-      ];
-    
-      // 1) Wczytaj zapisane wartości (jeśli są)
-      const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
-    
-      // --- Stan aplikacji (MUSI być przed użyciem w renderUwagi) ---
-      const state = {};
-    
-      // --- Uchwyty do opcji "uwagi" ---
-      const uwagiOn    = document.getElementById("uwagiOn");
-      const uwagiText  = document.getElementById("uwagiText");
-      const uwagiWrap  = document.getElementById("v-uwagi-wrap");
-      const uwagiSpan  = document.getElementById("v-uwagi");
-      const uwagiLabel = document.getElementById("uwagiLabel");
-    
-      // Przywróć zapisane ustawienia (jeśli były)
-      if (uwagiOn && saved.uwagiOn) uwagiOn.checked = true;
-      if (uwagiText && typeof saved.uwagiText === "string") uwagiText.value = saved.uwagiText;
-    
-      // Funkcja renderująca opcjonalną linijkę
-      function renderUwagi() {
-        if (!uwagiOn || !uwagiText || !uwagiLabel || !uwagiWrap || !uwagiSpan) return;
-        const enabled = uwagiOn.checked;
-        const txt = (uwagiText.value || "").trim();
-    
-        // zapis do stanu (żeby poszło do localStorage)
-        state.uwagiOn = enabled;
-        state.uwagiText = uwagiText.value || "";
-    
-        // UI formularza: pokaż/ukryj pole tekstowe
-        uwagiLabel.style.display = enabled ? "block" : "none";
-    
-        // Podgląd i kopiowanie: pokaż/ukryj linijkę
-        if (enabled && txt) {
-          uwagiSpan.textContent = txt;
-          uwagiWrap.style.display = "inline";
-        } else {
-          uwagiSpan.textContent = "";
-          uwagiWrap.style.display = "none";
-        }
+  <script>
+    // KLUCZ w localStorage
+    const LS_KEY = "szablonopis_v1";
+
+    // Mapowanie pól formularza -> miejsc w podglądzie
+    const pairs = [
+      ["stan", "v-stan"],
+      ["rozmiar", "v-rozmiar"],
+      ["kolor", "v-kolor"],
+      ["dlugosc", "v-dlugosc"],
+      ["szerokosc", "v-szerokosc"],
+      ["rekaw", "v-rekaw"],
+    ];
+
+    // 1) Wczytaj zapisane wartości (jeśli są)
+    const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
+
+    // --- Stan aplikacji ---
+    const state = {};
+
+    // --- Uchwyty do opcji "uwagi" ---
+    const uwagiOn    = document.getElementById("uwagiOn");
+    const uwagiText  = document.getElementById("uwagiText");
+    const uwagiWrap  = document.getElementById("v-uwagi-wrap");
+    const uwagiSpan  = document.getElementById("v-uwagi");
+    const uwagiLabel = document.getElementById("uwagiLabel");
+
+    // Przywróć zapisane ustawienia (jeśli były)
+    if (uwagiOn && saved.uwagiOn) uwagiOn.checked = true;
+    if (uwagiText && typeof saved.uwagiText === "string") uwagiText.value = saved.uwagiText;
+
+    // Funkcja renderująca opcjonalną linijkę
+    function renderUwagi() {
+      if (!uwagiOn || !uwagiText || !uwagiLabel || !uwagiWrap || !uwagiSpan) return;
+      const enabled = uwagiOn.checked;
+      const txt = (uwagiText.value || "").trim();
+
+      // zapis do stanu (żeby poszło do localStorage)
+      state.uwagiOn = enabled;
+      state.uwagiText = uwagiText.value || "";
+
+      // UI formularza: pokaż/ukryj pole tekstowe
+      uwagiLabel.style.display = enabled ? "block" : "none";
+
+      // Podgląd i kopiowanie: pokaż/ukryj linijkę
+      if (enabled && txt) {
+        uwagiSpan.textContent = txt;
+        uwagiWrap.style.display = "inline";
+      } else {
+        uwagiSpan.textContent = "";
+        uwagiWrap.style.display = "none";
       }
-    
-      // Nasłuch na przełącznik i pole tekstowe
-      uwagiOn?.addEventListener("change", () => { renderUwagi(); scheduleSave(); });
-      uwagiText?.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
-    
-      // Ustaw stan przy pierwszym uruchomieniu
-      renderUwagi();
-    
-      // 2) Połącz pola z podglądem + inicjalizacja z localStorage
-      for (const [inputId, viewId] of pairs) {
-        const input = document.getElementById(inputId);
-        const view  = document.getElementById(viewId);
-        if (!input || !view) continue;
-    
-        if (saved[inputId] !== undefined) input.value = saved[inputId];
-    
-        // funkcja formatująca: jeśli ma data-suffix, dołóż np. "cm"
-        const renderValue = () => {
-          const raw = input.value?.toString().trim();
-          const suffix = input.dataset.suffix || "";
-          view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
-          state[inputId] = input.value; // zapisujemy surową wartość (bez "cm")
-        };
-    
-        renderValue(); // ustaw na start
-    
-        input.addEventListener("input", () => {
-          renderValue();
-          scheduleSave();
-        });
-    
-        input.addEventListener("focus", () => input.select && input.select());
-      }
-    
-      // 3) Zapisywanie do localStorage (z prostym „debounce”)
-      let saveTimer = null;
-      function scheduleSave() {
-        clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => {
-          localStorage.setItem(LS_KEY, JSON.stringify(state));
-        }, 150);
-      }
-    
-      // 4) Kopiowanie całego opisu
-      document.getElementById("copy").addEventListener("click", async () => {
-        const pre = document.querySelector(".card pre") || document.querySelector("pre");
-        const text = pre ? pre.innerText : "";
-        try {
-          await navigator.clipboard.writeText(text);
-          const btn = document.getElementById("copy");
-          const old = btn.textContent;
-          btn.textContent = "Skopiowano ✓";
-          setTimeout(()=> btn.textContent = old, 1200);
-        } catch {
-          alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
-        }
+    }
+
+    // Nasłuch na przełącznik i pole tekstowe
+    uwagiOn?.addEventListener("change", () => { renderUwagi(); scheduleSave(); });
+    uwagiText?.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
+
+    // Ustaw stan przy pierwszym uruchomieniu
+    renderUwagi();
+
+    // 2) Połącz pola z podglądem + inicjalizacja z localStorage
+    for (const [inputId, viewId] of pairs) {
+      const input = document.getElementById(inputId);
+      const view  = document.getElementById(viewId);
+      if (!input || !view) continue;
+
+      if (saved[inputId] !== undefined) input.value = saved[inputId];
+
+      // funkcja formatująca: jeśli ma data-suffix, dołóż np. "cm"
+      const renderValue = () => {
+        const raw = input.value?.toString().trim();
+        const suffix = input.dataset.suffix || "";
+        view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
+        state[inputId] = input.value; // zapisujemy surową wartość (bez "cm")
+      };
+
+      renderValue(); // ustaw na start
+
+      input.addEventListener("input", () => {
+        renderValue();
+        scheduleSave();
       });
-    
-      // 5) Zapis przy zamykaniu karty
-      window.addEventListener("beforeunload", () => {
+
+      input.addEventListener("focus", () => input.select && input.select());
+    }
+
+    // 3) Zapisywanie do localStorage (debounce)
+    let saveTimer = null;
+    function scheduleSave() {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
         localStorage.setItem(LS_KEY, JSON.stringify(state));
-      });
-    </script>
+      }, 150);
+    }
 
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js?v=20');
+    // 4) Kopiowanie całego opisu
+    document.getElementById("copy").addEventListener("click", async () => {
+      const pre = document.querySelector(".card pre") || document.querySelector("pre");
+      const text = pre ? pre.innerText : "";
+      try {
+        await navigator.clipboard.writeText(text);
+        const btn = document.getElementById("copy");
+        const old = btn.textContent;
+        btn.textContent = "Skopiowano ✓";
+        setTimeout(()=> btn.textContent = old, 1200);
+      } catch {
+        alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C.");
       }
-    </script>
+    });
 
+    // 5) Zapis przy zamykaniu karty
+    window.addEventListener("beforeunload", () => {
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    });
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js?v=22');
+    }
+  </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
