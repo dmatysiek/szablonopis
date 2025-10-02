@@ -1,7 +1,7 @@
 {
   "name": "Szablonopis",
   "short_name": "Szablonopis",
-  "start_url": "./?appv=22",
+  "start_url": "./?appv=23",
   "display": "standalone",
   "background_color": "#0b0b0c",
   "theme_color": "#0b0b0c",
@@ -10,6 +10,7 @@
     { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
+
 
 
 
