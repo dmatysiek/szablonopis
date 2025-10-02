@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc</title>
-  <link rel="manifest" href="manifest.webmanifest?v=31">
+  <link rel="manifest" href="manifest.webmanifest?v=32">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -311,11 +311,19 @@
 
       input.addEventListener("input", () => { renderValue(); scheduleSave(); });
 
-      // iOS: po zmianie selecta od razu blur -> kolejny select otwiera się za 1 tap
-      if (input.tagName === "SELECT") {
-        input.addEventListener("change", () => { input.blur(); });
-      }
     }
+
+    // iOS fix: zanim klikniesz nowy <select>, wyczyść focus ze starego
+    document.addEventListener('pointerdown', (ev) => {
+      const t = ev.target;
+      const isSelect = el => el && el.tagName === 'SELECT';
+      if (isSelect(t)) {
+        const ae = document.activeElement;
+        if (isSelect(ae) && ae !== t) {
+          try { ae.blur(); } catch (_) {}
+        }
+      }
+    }, true); // capture: uruchom zanim przeglądarka przetworzy tap
 
     // Auto-select w polach wymiarów (tap -> zaznacza całość)
     ["dlugosc","szerokosc","rekaw"].forEach(id => {
@@ -358,8 +366,9 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=31');
+      navigator.serviceWorker.register('./sw.js?v=32');
     }
   </script>
 </body>
 </html>
+
