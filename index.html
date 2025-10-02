@@ -4,132 +4,233 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>QuickDesc</title>
-  <link rel="manifest" href="manifest.webmanifest?v=25">
+  <link rel="manifest" href="manifest.webmanifest?v=26">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <style>
-    /* Minimalny,  schludny styl */
-    :root { color-scheme: light dark; }
-    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #0b0b0c; color: #e9e9ea; }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
-    h1 { font-size: 20px; margin: 0 0 16px; font-weight: 600; }
-    .card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 16px 18px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-    pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font: inherit; }
-    .hint { opacity: .8; font-size: 13px; margin-top: 10px; }
 
-    /* spójne pola – minimalnie większe */
-    select,
-    input[type="number"],
-    input[type="text"] {
-      font-size: 16px;
-      line-height: 1.3;
-      height: 40px;
-      padding: 8px 10px;
-      box-sizing: border-box;
-      border-radius: 3px;
+  <style>
+    /* ====== Kolory i bazowe ustawienia ====== */
+    :root{
+      color-scheme: light dark;
+      --bg: #0b0b0c;
+      --card: #141416;
+      --card-2: #111113;
+      --border: rgba(255,255,255,.08);
+      --border-strong: rgba(255,255,255,.14);
+      --text: #e9e9ea;
+      --text-dim: #b8b8bb;
+      --accent: #21c0a5;        /* delikatna mięta jako akcent */
+      --shadow: 0 12px 30px rgba(0,0,0,.35);
+      --radius: 14px;
+      --radius-sm: 10px;
     }
 
-    /* checkbox w linii z tekstem */
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 0 0 10px; /* 1 odstęp, zamiast <br><br> */
+    * { box-sizing: border-box; }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .wrap{ max-width: 760px; margin: 0 auto; padding: 18px 16px 28px; }
+
+    /* ====== Pasek tytułu (lekki, jak w natywnych apkach) ====== */
+    .topbar{
+      position: sticky; top: 0; z-index: 5;
+      background: linear-gradient(180deg, #0b0b0c, rgba(11,11,12,.92));
+      backdrop-filter: saturate(140%) blur(8px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner{ max-width: 760px; margin: 0 auto; padding: 14px 16px; }
+    .title{ font-size: 20px; font-weight: 600; letter-spacing:.2px; }
+
+    /* ====== Karty ====== */
+    .card{
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .card-pad{ padding: 16px; }
+    .card + .card{ margin-top: 18px; }
+
+    /* ====== Tytuły sekcji ====== */
+    .section-title{
+      font-size: 14px; font-weight: 600; color: var(--text-dim);
+      letter-spacing:.4px; text-transform: uppercase;
+      padding: 10px 2px 6px; margin: 0 0 6px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    /* ====== Form ====== */
+    .form-grid{ display: grid; gap: 14px; }
+
+    .field label{
+      display:block;
+      font-size: 13px;
+      color: var(--text-dim);
+      margin: 0 0 6px;
+    }
+
+    .control{
+      width:100%;
+      height: 46px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card-2);
+      color: var(--text);
+      -webkit-text-fill-color: var(--text); /* iOS zamknięty select */
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .control:focus{
+      border-color: var(--border-strong);
+      box-shadow: 0 0 0 3px rgba(33,192,165,.12);
+      background: #151619;
+    }
+    select.control option{ color:var(--text); background: var(--card-2); }
+
+    /* Checkbox w jednej linii */
+    .checkbox-row{
+      display:flex; align-items:center; gap:10px;
+      padding: 8px 0 2px;
     }
     .checkbox-row input[type="checkbox"]{
-      width: 18px; height: 18px; margin: 0;
+      width: 18px; height: 18px; margin:0;
+      accent-color: var(--accent);
     }
 
-    /* biały tekst w zamkniętym select (iOS) */
-    select { color:#e9e9ea; -webkit-text-fill-color:#e9e9ea; }
-    /* desktop/Android – dropdown ciemny; iOS i tak użyje systemowego pickera */
-    select option { color:#e9e9ea; background:#0b0b0c; }
+    /* Tekstowe pole „uwagi” */
+    #uwagiLabel{ margin-top: -2px; }
+    #uwagiText.control{ height: 46px; }
+
+    /* ====== Podgląd ====== */
+    pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line-height:1.45; letter-spacing:.1px; }
+
+    /* ====== Przycisk kopiowania ====== */
+    .btn{
+      display:block; width:100%;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      background: #1a1b1e;
+      color: var(--text); font-weight: 600;
+      cursor:pointer;
+      transition: background .15s ease, transform .05s ease, border-color .15s ease;
+    }
+    .btn:hover{ background:#1d2024; border-color: var(--border-strong); }
+    .btn:active{ transform: scale(.99); }
+
+    /* Separator jak w natywnych apkach */
+    .sep{ height: 1px; background: var(--border); margin: 18px 0; border-radius: 2px; }
   </style>
 </head>
 <body>
 
+  <!-- Pasek tytułu -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="title">QuickDesc</div>
+    </div>
+  </div>
+
   <div class="wrap">
-    <div class="card" style="margin-bottom:16px">
 
-      <label>Stan<br>
-        <select id="stan">
-          <option value="Dobry">Dobry</option>
-          <option value="Bardzo dobry" selected>Bardzo dobry</option>
-          <option value="Nowy bez metki">Nowy bez metki</option>
-          <option value="Nowy z metką">Nowy z metką</option>
-          <option value="Świetny, jak nowy">Świetny, jak nowy</option>
-        </select>
-      </label><br><br>
+    <!-- Karta z formularzem -->
+    <div class="card card-pad">
+      <h2 class="section-title">Dane</h2>
+      <div class="form-grid">
 
-      <label>Rozmiar<br>
-        <select id="rozmiar">
-          <option value="XS">XS</option>
-          <option value="S" selected>S</option>
-          <option value="M">M</option>
-          <option value="L">L</option>
-          <option value="XL">XL</option>
-          <option value="Damski XS">Damski XS</option>
-          <option value="Damski S">Damski S</option>
-          <option value="Damski M">Damski M</option>
-          <option value="Damski L">Damski L</option>
-          <option value="Damski XL">Damski XL</option>
-          <option value="Męski XS">Męski XS</option>
-          <option value="Męski S">Męski S</option>
-          <option value="Męski M">Męski M</option>
-          <option value="Męski L">Męski L</option>
-          <option value="Męski XL">Męski XL</option>
-        </select>
-      </label><br><br>
+        <div class="field">
+          <label>Stan</label>
+          <select id="stan" class="control">
+            <option value="Dobry">Dobry</option>
+            <option value="Bardzo dobry" selected>Bardzo dobry</option>
+            <option value="Nowy bez metki">Nowy bez metki</option>
+            <option value="Nowy z metką">Nowy z metką</option>
+            <option value="Świetny, jak nowy">Świetny, jak nowy</option>
+          </select>
+        </div>
 
-      <label>Kolor<br>
-        <select id="kolor">
-          <option value="Czarny" selected>Czarny</option>
-          <option value="Biały">Biały</option>
-          <option value="Szary">Szary</option>
-          <option value="Brązowy">Brązowy</option>
-          <option value="Niebieski">Niebieski</option>
-          <option value="Granatowy">Granatowy</option>
-          <option value="Zielony">Zielony</option>
-          <option value="Burgundowy">Burgundowy</option>
-          <option value="Fioletowy">Fioletowy</option>
-          <option value="Czerwony">Czerwony</option>
-          <option value="Beżowy">Beżowy</option>
-          <option value="Kremowy">Kremowy</option>
-          <option value="Różowy">Różowy</option>
-          <option value="Żółty">Żółty</option>
-        </select>
-      </label><br><br>
+        <div class="field">
+          <label>Rozmiar</label>
+          <select id="rozmiar" class="control">
+            <option value="XS">XS</option>
+            <option value="S" selected>S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="Damski XS">Damski XS</option>
+            <option value="Damski S">Damski S</option>
+            <option value="Damski M">Damski M</option>
+            <option value="Damski L">Damski L</option>
+            <option value="Damski XL">Damski XL</option>
+            <option value="Męski XS">Męski XS</option>
+            <option value="Męski S">Męski S</option>
+            <option value="Męski M">Męski M</option>
+            <option value="Męski L">Męski L</option>
+            <option value="Męski XL">Męski XL</option>
+          </select>
+        </div>
 
-      <!-- PRZEŁĄCZNIK – równe wyrównanie -->
-      <label class="checkbox-row">
-        <input type="checkbox" id="uwagiOn">
-        Dodatkowa linijka?
-      </label>
+        <div class="field">
+          <label>Kolor</label>
+          <select id="kolor" class="control">
+            <option value="Czarny" selected>Czarny</option>
+            <option value="Biały">Biały</option>
+            <option value="Szary">Szary</option>
+            <option value="Brązowy">Brązowy</option>
+            <option value="Niebieski">Niebieski</option>
+            <option value="Granatowy">Granatowy</option>
+            <option value="Zielony">Zielony</option>
+            <option value="Burgundowy">Burgundowy</option>
+            <option value="Fioletowy">Fioletowy</option>
+            <option value="Czerwony">Czerwony</option>
+            <option value="Beżowy">Beżowy</option>
+            <option value="Kremowy">Kremowy</option>
+            <option value="Różowy">Różowy</option>
+            <option value="Żółty">Żółty</option>
+          </select>
+        </div>
 
-      <!-- POLE – ta sama wysokość/czcionka co reszta -->
-      <label id="uwagiLabel" style="display:none; margin:0 0 10px">
-        Treść dodatkowej informacji...<br>
-        <input id="uwagiText" type="text" placeholder="...">
-      </label><br><br>
+        <label class="checkbox-row">
+          <input type="checkbox" id="uwagiOn">
+          Dodatkowa linijka?
+        </label>
 
-      <label>Długość całkowita (cm)<br>
-        <input id="dlugosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
-      </label><br><br>
+        <div class="field" id="uwagiLabel" style="display:none;">
+          <label>Treść dodatkowej informacji…</label>
+          <input id="uwagiText" class="control" type="text" placeholder="np. Bluza ma plamę na rękawie">
+        </div>
 
-      <label>Szerokość pod pachami (cm)<br>
-        <input id="szerokosc" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
-      </label><br><br>
+        <div class="sep"></div>
 
-      <label>Długość od pachy do końca rękawa (cm)<br>
-        <input id="rekaw" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
-      </label>
+        <div class="field">
+          <label>Długość całkowita (cm)</label>
+          <input id="dlugosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
+        </div>
 
+        <div class="field">
+          <label>Szerokość pod pachami (cm)</label>
+          <input id="szerokosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
+        </div>
+
+        <div class="field">
+          <label>Długość od pachy do końca rękawa (cm)</label>
+          <input id="rekaw" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
+        </div>
+
+      </div>
     </div>
 
-    <hr />
-
-    <div class="card">
+    <!-- Karta z podglądem -->
+    <div class="card card-pad">
 <pre>
 🌟 Stan: <b><span id="v-stan"></span></b>
 👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
@@ -144,7 +245,7 @@
 
 #nike #bluza #kaptur #męska #damska #man #woman #hoodie #crewneck #sweatshirt #vintage #unisex #swoosh #air #max #adidas #retro #zipped #oversize #y2k
 </pre>
-      <button id="copy" style="margin-top:12px; width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.08); color:inherit; font-weight:600; cursor:pointer">Kopiuj opis</button>
+      <button id="copy" class="btn" style="margin-top:12px;">Kopiuj opis</button>
     </div>
   </div>
 
@@ -168,31 +269,26 @@
     // --- Stan aplikacji ---
     const state = {};
 
-    // --- Uchwyty do opcji "uwagi" ---
+    // --- Opcjonalna linijka ---
     const uwagiOn    = document.getElementById("uwagiOn");
     const uwagiText  = document.getElementById("uwagiText");
     const uwagiWrap  = document.getElementById("v-uwagi-wrap");
     const uwagiSpan  = document.getElementById("v-uwagi");
     const uwagiLabel = document.getElementById("uwagiLabel");
 
-    // Przywróć zapisane ustawienia (jeśli były)
     if (uwagiOn && saved.uwagiOn) uwagiOn.checked = true;
     if (uwagiText && typeof saved.uwagiText === "string") uwagiText.value = saved.uwagiText;
 
-    // Funkcja renderująca opcjonalną linijkę
     function renderUwagi() {
       if (!uwagiOn || !uwagiText || !uwagiLabel || !uwagiWrap || !uwagiSpan) return;
       const enabled = uwagiOn.checked;
       const txt = (uwagiText.value || "").trim();
 
-      // zapis do stanu (żeby poszło do localStorage)
       state.uwagiOn = enabled;
       state.uwagiText = uwagiText.value || "";
 
-      // UI formularza: pokaż/ukryj pole tekstowe
       uwagiLabel.style.display = enabled ? "block" : "none";
 
-      // Podgląd i kopiowanie: pokaż/ukryj linijkę
       if (enabled && txt) {
         uwagiSpan.textContent = txt;
         uwagiWrap.style.display = "inline";
@@ -201,15 +297,11 @@
         uwagiWrap.style.display = "none";
       }
     }
-
-    // Nasłuch na przełącznik i pole tekstowe
     uwagiOn?.addEventListener("change", () => { renderUwagi(); scheduleSave(); });
     uwagiText?.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
-
-    // Ustaw stan przy pierwszym uruchomieniu
     renderUwagi();
 
-    // 2) Połącz pola z podglądem + inicjalizacja z localStorage
+    // 2) Inicjalizacja pól
     for (const [inputId, viewId] of pairs) {
       const input = document.getElementById(inputId);
       const view  = document.getElementById(viewId);
@@ -217,25 +309,22 @@
 
       if (saved[inputId] !== undefined) input.value = saved[inputId];
 
-      // funkcja formatująca: jeśli ma data-suffix, dołóż np. "cm"
       const renderValue = () => {
         const raw = input.value?.toString().trim();
         const suffix = input.dataset.suffix || "";
         view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
-        state[inputId] = input.value; // zapisujemy surową wartość (bez "cm")
+        state[inputId] = input.value;
       };
 
-      renderValue(); // ustaw na start
+      renderValue();
 
       input.addEventListener("input", () => {
         renderValue();
         scheduleSave();
       });
-
-      input.addEventListener("focus", () => input.select && input.select());
     }
 
-    // 3) Zapisywanie do localStorage (debounce)
+    // 3) Zapisywanie (debounce)
     let saveTimer = null;
     function scheduleSave() {
       clearTimeout(saveTimer);
@@ -244,7 +333,7 @@
       }, 150);
     }
 
-    // 4) Kopiowanie całego opisu
+    // 4) Kopiowanie
     document.getElementById("copy").addEventListener("click", async () => {
       const pre = document.querySelector(".card pre") || document.querySelector("pre");
       const text = pre ? pre.innerText : "";
@@ -267,11 +356,8 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=25');
+      navigator.serviceWorker.register('./sw.js?v=26');
     }
   </script>
 </body>
 </html>
-
-
-
