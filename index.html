@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Szablonopis</title>
-    <link rel="manifest" href="manifest.webmanifest?v=7">
+    <link rel="manifest" href="manifest.webmanifest?v=8">
     <meta name="theme-color" content="#0b0b0c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="icon-192.png">
@@ -24,7 +24,17 @@
   <div class="wrap">
     <h1>Uzupełnij dane</h1>
         <div class="card" style="margin-bottom:16px">
-            <label>Stan<br><input id="stan" placeholder="np. Bardzo dobry" value="Bardzo dobry"></label><br><br>
+            
+            <label>Stan<br>
+              <select id="stan">
+                <option value="Dobry">Dobry</option>
+                <option value="Bardzo dobry" selected>Bardzo dobry</option>
+                <option value="Nowy bez metki">Nowy bez metki</option>
+                <option value="Nowy z metką">Nowy z metką</option>
+                <option value="Świetny, jak nowy">Świetny, jak nowy</option>
+              </select>
+            </label>
+
             <label>Rozmiar<br><input id="rozmiar" placeholder="np. S" value="S"></label><br><br>
             <label>Kolor<br><input id="kolor" placeholder="np. Czarny" value="Czarny"></label><br><br>
             <label>Długość całkowita<br><input id="dlugosc" placeholder="np. 65cm" value="65cm"></label><br><br>
@@ -134,6 +144,7 @@
 
 </body>
 </html>
+
 
 
 
