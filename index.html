@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc</title>
-  <link rel="manifest" href="manifest.webmanifest?v=33">
+  <link rel="manifest" href="manifest.webmanifest?v=34">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -227,7 +227,7 @@
 <pre>
 🌟 Stan: <b><span id="v-stan"></span></b>
 👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
-🎨 Kolor: <b><span id="v-kolor"></span></b><span id="v-uwagi-wrap" style="display:none"><br>👕 <span id="v-uwagi"></span></span>
+🎨 Kolor: <b><span id="v-kolor"></span></b><span id="v-uwagi-wrap" style="display:none"><br>ℹ️ <span id="v-uwagi"></span></span>
 
 📏 Wymiary:
 • Długość całkowita: <b><span id="v-dlugosc">65cm</span></b>
@@ -389,8 +389,9 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=33');
+      navigator.serviceWorker.register('./sw.js?v=34');
     }
   </script>
 </body>
 </html>
+
