@@ -163,59 +163,49 @@
   </div>
 
   <!-- MODAL LOGOWANIA / REJESTRACJI -->
-  <!-- MODAL LOGOWANIA / REJESTRACJI -->
-<div id="loginModal" class="modal" aria-hidden="true">
-  <div class="modal-backdrop"></div>
-  <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-    <div class="modal-header">
-      <div id="loginTitle" class="title">Konto</div>
-      <button class="icon-btn close" id="loginCancelTop" title="Zamknij">✖</button>
-    </div>
-
-    <div class="form-grid">
-      <div class="field">
-        <label>Adres e-mail</label>
-        <input id="loginEmail" class="control" type="email" placeholder="np. jan@twojmail.pl">
+  <div id="loginModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+      <div class="modal-header">
+        <div id="loginTitle" class="title">Konto</div>
+        <button class="icon-btn close" id="loginCancelTop" title="Zamknij">✖</button>
       </div>
-      <div class="field">
-        <label>Hasło</label>
-        <input id="loginPass" class="control" type="password" placeholder="••••••••">
+  
+      <div class="form-grid">
+        <div class="field">
+          <label>Adres e-mail</label>
+          <input id="loginEmail" class="control" type="email" placeholder="np. jan@twojmail.pl">
+        </div>
+        <div class="field">
+          <label>Hasło</label>
+          <input id="loginPass" class="control" type="password" placeholder="••••••••">
+        </div>
+  
+        <!-- tylko w trybie rejestracji -->
+        <div class="field" id="confirmRow" style="display:none">
+          <label>Powtórz hasło</label>
+          <input id="loginPass2" class="control" type="password" placeholder="••••••••">
+        </div>
       </div>
-
-      <!-- tylko dla rejestracji -->
-      <div class="field" id="confirmRow" style="display:none">
-        <label>Powtórz hasło</label>
-        <input id="loginPass2" class="control" type="password" placeholder="••••••••">
+  
+      <div class="btn-row" style="margin-top:12px;">
+        <button id="loginSubmit" class="btn">Zaloguj</button>
+        <button id="loginCancel" class="btn secondary">Anuluj</button>
       </div>
-    </div>
-
-    <div class="btn-row" style="margin-top:12px;">
-      <button id="loginSubmit" class="btn">Zaloguj</button>
-      <button id="loginCancel" class="btn secondary">Anuluj</button>
-    </div>
-
-    <!-- blok widoczny TYLKO w trybie logowania -->
-    <div id="loginExtras" style="margin-top:10px">
-      <div class="muted">
+  
+      <!-- reset hasła jako link -->
+      <div style="margin-top:12px" class="muted">
         Zapomniałeś hasła?
-        <a id="resetLink" href="#" style="text-decoration:underline;">Wyślij link resetu</a>
+        <a href="#" id="resetLink">Wyślij link resetu</a>
       </div>
-      <div class="muted" style="margin-top:8px">
+  
+      <!-- kontekstowy przełącznik trybów -->
+      <div style="margin-top:8px" class="muted" id="switchRow">
         Nie masz jeszcze konta?
-        <a id="toRegister" href="#" style="text-decoration:underline;">Zarejestruj się tutaj</a>
-      </div>
-    </div>
-
-    <!-- blok widoczny TYLKO w trybie rejestracji -->
-    <div id="registerExtras" style="margin-top:10px; display:none;">
-      <div class="muted">
-        Masz już konto?
-        <a id="toLogin" href="#" style="text-decoration:underline;">Chcę się zalogować</a>
+        <a href="#" id="switchLink">Zarejestruj się tutaj</a>
       </div>
     </div>
   </div>
-</div>
-
 
   <script type="module" src="./supabase.js"></script>
   <script type="module" src="./auth.js?v=6"></script>
