@@ -9,18 +9,6 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="styles.css?v=40">
-  <style>
-    /* Drobny CSS pod miniatury i kolumnę ID (możesz przenieść do styles.css) */
-    .table th.id, .table td.id { width: 52px; text-align: center; }
-    .table th.photo, .table td.photo { width: 72px; text-align: center; }
-    .thumb {
-      display:inline-block; width:45px; height:60px; /* 3:4 */
-      border-radius:6px; overflow:hidden; border:1px solid rgba(255,255,255,.12);
-      background:#111113;
-    }
-    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .btn.small { padding: 10px 12px; font-weight: 600; }
-  </style>
 </head>
 <body>
   <div class="topbar">
@@ -63,10 +51,14 @@
           <label>Przychód (PLN)</label>
           <input id="s-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0" placeholder="np. 89.00">
         </div>
+
+        <!-- NOWE: zdjęcie opcjonalnie -->
         <div class="field">
           <label>Zdjęcie (opcjonalnie)</label>
-          <input id="s-photo" class="control" type="file" accept="image/*" capture="environment">
+          <input id="s-photo" class="control" type="file" accept="image/*">
+          <div id="photoPreview" class="photo-preview"></div>
         </div>
+
         <button id="addSale" class="btn">Dodaj pozycję</button>
       </div>
     </div>
@@ -78,9 +70,9 @@
         <table class="table" id="salesTable">
           <thead>
             <tr>
-              <th class="id">ID</th>
-              <th class="photo">Zdjęcie</th>
+              <th class="num" style="width:48px">#</th>
               <th>Data</th>
+              <th>Foto</th>
               <th>Nazwa</th>
               <th class="num">Koszt</th>
               <th class="num">Przychód</th>
@@ -105,7 +97,7 @@
     </div>
   </div>
 
-  <script type="module" src="sales.js?v=40"></script>
+  <script type="module" src="sales.js?v=39"></script>
   <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=40');
   </script>
