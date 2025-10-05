@@ -136,3 +136,29 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 }
 .totals b{ font-weight:700; }
 .muted{ color: var(--text-dim); }
+
+/* miniatury w tabeli: 3:4, małe podglądy */
+.thumb{
+  width: 36px;      /* 3 */
+  height: 48px;     /* 4 */
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #000;
+  display: block;
+}
+
+/* kontener podglądu przy dodawaniu */
+.photo-preview{
+  margin-top: 8px;
+}
+.photo-preview .thumb{
+  width: 60px;   /* większy pogląd w formularzu */
+  height: 80px;  /* 3:4 */
+}
+
+/* uściślenie szerokości kolumny z akcjami przy dodatkowych kolumnach */
+.table th.row-actions, .table td.row-actions{
+  white-space: nowrap;
+  text-align: right;
+}
