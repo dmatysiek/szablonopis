@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc</title>
-  <link rel="manifest" href="manifest.webmanifest?v=34">
+  <link rel="manifest" href="manifest.webmanifest?v=35">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
@@ -36,15 +36,23 @@
     }
     .wrap{ max-width: 760px; margin: 0 auto; padding: 18px 16px 28px; }
 
-    /* Pasek tytułu */
+    /* Topbar */
     .topbar{
       position: sticky; top: 0; z-index: 5;
       background: linear-gradient(180deg, #0b0b0c, rgba(11,11,12,.92));
       backdrop-filter: saturate(140%) blur(8px);
       border-bottom: 1px solid var(--border);
     }
-    .topbar-inner{ max-width: 760px; margin: 0 auto; padding: 14px 16px; }
+    .topbar-inner{ max-width: 760px; margin: 0 auto; padding: 12px 16px 10px; }
     .title{ font-size: 20px; font-weight: 600; letter-spacing:.2px; }
+    .tabs{ margin-top:8px; display:flex; gap:8px; }
+    .tab{
+      padding:8px 12px; border-radius:10px; border:1px solid var(--border);
+      background:#141416; color:var(--text); font-weight:600; cursor:pointer;
+      transition: background .15s ease, border-color .15s ease;
+      touch-action: manipulation;
+    }
+    .tab.active{ border-color: var(--border-strong); background:#1a1b1e; }
 
     /* Karty */
     .card{
@@ -132,98 +140,106 @@
 </head>
 <body>
 
+  <!-- TOPBAR z zakładkami -->
   <div class="topbar">
     <div class="topbar-inner">
       <div class="title">QuickDesc</div>
+      <div class="tabs">
+        <button class="tab" data-view="desc">Opis</button>
+        <button class="tab" data-view="sales">Sprzedaż</button>
+      </div>
     </div>
   </div>
 
   <div class="wrap">
-    <div class="card card-pad">
-      <div class="form-grid">
 
-        <div class="field">
-          <label>Stan</label>
-          <select id="stan" class="control">
-            <option value="Dobry">Dobry</option>
-            <option value="Bardzo dobry" selected>Bardzo dobry</option>
-            <option value="Nowy bez metki">Nowy bez metki</option>
-            <option value="Nowy z metką">Nowy z metką</option>
-            <option value="Świetny, jak nowy">Świetny, jak nowy</option>
-          </select>
+    <!-- WIDOK 1: OPIS -->
+    <section id="view-desc">
+      <div class="card card-pad">
+        <div class="form-grid">
+
+          <div class="field">
+            <label>Stan</label>
+            <select id="stan" class="control">
+              <option value="Dobry">Dobry</option>
+              <option value="Bardzo dobry" selected>Bardzo dobry</option>
+              <option value="Nowy bez metki">Nowy bez metki</option>
+              <option value="Nowy z metką">Nowy z metką</option>
+              <option value="Świetny, jak nowy">Świetny, jak nowy</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Rozmiar</label>
+            <select id="rozmiar" class="control">
+              <option value="XS">XS</option>
+              <option value="S" selected>S</option>
+              <option value="M">M</option>
+              <option value="L">L</option>
+              <option value="XL">XL</option>
+              <option value="Damski XS">Damski XS</option>
+              <option value="Damski S">Damski S</option>
+              <option value="Damski M">Damski M</option>
+              <option value="Damski L">Damski L</option>
+              <option value="Damski XL">Damski XL</option>
+              <option value="Męski XS">Męski XS</option>
+              <option value="Męski S">Męski S</option>
+              <option value="Męski M">Męski M</option>
+              <option value="Męski L">Męski L</option>
+              <option value="Męski XL">Męski XL</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Kolor</label>
+            <select id="kolor" class="control">
+              <option value="Czarny" selected>Czarny</option>
+              <option value="Biały">Biały</option>
+              <option value="Szary">Szary</option>
+              <option value="Brązowy">Brązowy</option>
+              <option value="Niebieski">Niebieski</option>
+              <option value="Granatowy">Granatowy</option>
+              <option value="Zielony">Zielony</option>
+              <option value="Burgundowy">Burgundowy</option>
+              <option value="Fioletowy">Fioletowy</option>
+              <option value="Czerwony">Czerwony</option>
+              <option value="Beżowy">Beżowy</option>
+              <option value="Kremowy">Kremowy</option>
+              <option value="Różowy">Różowy</option>
+              <option value="Żółty">Żółty</option>
+            </select>
+          </div>
+
+          <label class="checkbox-row" id="uwagiRow">
+            <input type="checkbox" id="uwagiOn">
+            Dodatkowa linijka?
+          </label>
+
+          <div class="field" id="uwagiLabel">
+            <label>Treść dodatkowej informacji…</label>
+            <input id="uwagiText" class="control" type="text" placeholder="np. Bluza ma plamę na rękawie">
+          </div>
+
+          <div class="field">
+            <label>Długość całkowita (cm)</label>
+            <input id="dlugosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
+          </div>
+
+          <div class="field">
+            <label>Szerokość pod pachami (cm)</label>
+            <input id="szerokosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
+          </div>
+
+          <div class="field">
+            <label>Długość od pachy do końca rękawa (cm)</label>
+            <input id="rekaw" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
+          </div>
+
         </div>
-
-        <div class="field">
-          <label>Rozmiar</label>
-          <select id="rozmiar" class="control">
-            <option value="XS">XS</option>
-            <option value="S" selected>S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL">XL</option>
-            <option value="Damski XS">Damski XS</option>
-            <option value="Damski S">Damski S</option>
-            <option value="Damski M">Damski M</option>
-            <option value="Damski L">Damski L</option>
-            <option value="Damski XL">Damski XL</option>
-            <option value="Męski XS">Męski XS</option>
-            <option value="Męski S">Męski S</option>
-            <option value="Męski M">Męski M</option>
-            <option value="Męski L">Męski L</option>
-            <option value="Męski XL">Męski XL</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Kolor</label>
-          <select id="kolor" class="control">
-            <option value="Czarny" selected>Czarny</option>
-            <option value="Biały">Biały</option>
-            <option value="Szary">Szary</option>
-            <option value="Brązowy">Brązowy</option>
-            <option value="Niebieski">Niebieski</option>
-            <option value="Granatowy">Granatowy</option>
-            <option value="Zielony">Zielony</option>
-            <option value="Burgundowy">Burgundowy</option>
-            <option value="Fioletowy">Fioletowy</option>
-            <option value="Czerwony">Czerwony</option>
-            <option value="Beżowy">Beżowy</option>
-            <option value="Kremowy">Kremowy</option>
-            <option value="Różowy">Różowy</option>
-            <option value="Żółty">Żółty</option>
-          </select>
-        </div>
-
-        <label class="checkbox-row" id="uwagiRow">
-          <input type="checkbox" id="uwagiOn">
-          Dodatkowa linijka?
-        </label>
-
-        <div class="field" id="uwagiLabel">
-          <label>Treść dodatkowej informacji…</label>
-          <input id="uwagiText" class="control" type="text" placeholder="np. Bluza ma plamę na rękawie">
-        </div>
-
-        <div class="field">
-          <label>Długość całkowita (cm)</label>
-          <input id="dlugosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
-        </div>
-
-        <div class="field">
-          <label>Szerokość pod pachami (cm)</label>
-          <input id="szerokosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
-        </div>
-
-        <div class="field">
-          <label>Długość od pachy do końca rękawa (cm)</label>
-          <input id="rekaw" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
-        </div>
-
       </div>
-    </div>
 
-    <!-- Podgląd -->
-    <div class="card card-pad">
+      <!-- Podgląd -->
+      <div class="card card-pad">
 <pre>
 🌟 Stan: <b><span id="v-stan"></span></b>
 👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
@@ -238,8 +254,23 @@
 
 #nike #bluza #kaptur #męska #damska #man #woman #hoodie #crewneck #sweatshirt #vintage #unisex #swoosh #air #max #adidas #retro #zipped #oversize #y2k
 </pre>
-      <button id="copy" class="btn" style="margin-top:12px;">Kopiuj opis</button>
-    </div>
+        <button id="copy" class="btn" style="margin-top:12px;">Kopiuj opis</button>
+      </div>
+    </section>
+
+    <!-- WIDOK 2: SPRZEDAŻ (placeholder – następny krok dorobimy form i tabelę) -->
+    <section id="view-sales" style="display:none">
+      <div class="card card-pad">
+        <div style="opacity:.92; font-size:15px; line-height:1.5">
+          Tu powstanie arkusz sprzedaży: filtr miesiąc/rok, szybkie dodawanie pozycji
+          (data, nazwa, koszt, przychód → auto dochód), lista oraz sumy.
+          <br><br>
+          Kliknij zakładkę <b>Opis</b>, aby wrócić do generatora opisu. Jeśli chcesz, żebym
+          od razu dodał tu formularz i listę z sumami – daj znać, dorobię w kolejnym kroku.
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <script>
@@ -257,7 +288,27 @@
     const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
     const state = {};
 
-    // Opcjonalna linijka
+    // --- nawigacja zakładek ---
+    const tabs = document.querySelectorAll('.tab');
+    const views = {
+      desc: document.getElementById('view-desc'),
+      sales: document.getElementById('view-sales')
+    };
+    function show(view){
+      if(!views[view]) view = 'desc';
+      Object.entries(views).forEach(([k,el])=>{
+        el.style.display = (k===view) ? '' : 'none';
+      });
+      tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.view===view));
+      try { localStorage.setItem('qd_last_view', view); } catch(_){}
+      if (location.hash !== '#'+view) history.replaceState(null,'','#'+view);
+    }
+    tabs.forEach(btn => btn.addEventListener('click', () => show(btn.dataset.view)));
+    window.addEventListener('hashchange', () => show(location.hash.replace('#','') || 'desc'));
+    const startView = (location.hash.replace('#','')) || localStorage.getItem('qd_last_view') || 'desc';
+    show(startView);
+
+    // --- Opcjonalna linijka (Opis) ---
     const uwagiOn    = document.getElementById("uwagiOn");
     const uwagiText  = document.getElementById("uwagiText");
     const uwagiWrap  = document.getElementById("v-uwagi-wrap");
@@ -293,7 +344,7 @@
     uwagiText?.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
     renderUwagi();
 
-    // Pola formularza
+    // --- Pola formularza (Opis) ---
     for (const [inputId, viewId] of pairs) {
       const input = document.getElementById(inputId);
       const view  = document.getElementById(viewId);
@@ -312,7 +363,6 @@
       input.addEventListener("input", () => { renderValue(); scheduleSave(); });
 
       // iOS fix: zanim klikniesz nowy <select>, wyczyść focus ze starego
-      // (zapobiega „miganiu” listy – 1 tap zawsze działa)
       document.addEventListener('pointerdown', (ev) => {
         const t = ev.target;
         const isSelect = el => el && el.tagName === 'SELECT';
@@ -325,14 +375,14 @@
       }, true);
     }
 
-    // Auto-select tylko przy TAPIE (nie przy przewijaniu)
+    // --- Auto-select tylko przy TAPIE (nie przy przewijaniu) dla pól liczbowych ---
     ["dlugosc","szerokosc","rekaw"].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
 
       let startX = 0, startY = 0, moved = false, t0 = 0;
-      const THRESHOLD = 6;       // piksele ruchu
-      const TAP_TIME  = 300;     // ms
+      const THRESHOLD = 6;    // px
+      const TAP_TIME  = 300;  // ms
 
       const selectAll = () => { try { el.select(); } catch(_){} };
 
@@ -341,7 +391,6 @@
         startY = e.clientY || 0;
         moved  = false;
         t0     = e.timeStamp || Date.now();
-        // UWAGA: bez preventDefault — pozwalamy przewijać
       });
 
       el.addEventListener("pointermove", (e) => {
@@ -353,13 +402,11 @@
       el.addEventListener("pointerup", (e) => {
         const dt = (e.timeStamp || Date.now()) - t0;
         if (!moved && dt < TAP_TIME) {
-          // traktuj jako tap
           if (document.activeElement !== el) el.focus();
           setTimeout(selectAll, 0);
         }
       });
 
-      // na sam focus zaznacz (np. z klawiatury „Dalej”)
       el.addEventListener("focus", () => setTimeout(selectAll, 0));
     });
 
@@ -372,7 +419,7 @@
     }
 
     document.getElementById("copy").addEventListener("click", async () => {
-      const pre = document.querySelector(".card pre") || document.querySelector("pre");
+      const pre = document.querySelector("#view-desc .card pre") || document.querySelector("pre");
       const text = pre ? pre.innerText : "";
       try {
         await navigator.clipboard.writeText(text);
@@ -389,10 +436,8 @@
 
   <script>
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=34');
+      navigator.serviceWorker.register('./sw.js?v=35');
     }
   </script>
 </body>
 </html>
-
-
