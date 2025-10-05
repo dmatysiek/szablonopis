@@ -42,6 +42,15 @@ let UID = null;
 let currentYM = null;
 let rows = []; // ostatnio pobrane wiersze
 
+// --- Date helpers ---
+function todayLocalYYYYMMDD(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 // --- Gating: pokaż stronę dopiero po zalogowaniu ---
 async function ensureLoggedIn(){
   const { data:{ session } } = await supabase.auth.getSession();
@@ -58,10 +67,14 @@ async function ensureLoggedIn(){
 supabase.auth.onAuthStateChange((_ev, session) => {
   UID = session?.user?.id || null;
   if (UID){
-    wrap.hidden = false; closeLogin();
+    wrap.hidden = false; 
+    closeLogin();
+    // jeśli pole daty jest puste – ustaw dzisiejszą
+    if (inDate && !inDate.value) inDate.value = todayLocalYYYYMMDD();
     if (currentYM) loadMonth(currentYM);
   } else {
-    wrap.hidden = true;  openLogin();
+    wrap.hidden = true;  
+    openLogin();
   }
 });
 
@@ -320,6 +333,7 @@ eClearPhoto?.addEventListener('click', async () => {
   const now = new Date();
   const ym = ymKey(now);
   monthPicker.value = ym;
+  inDate.value = todayLocalYYYYMMDD();
   await loadMonth(ym);
 })();
 monthPicker?.addEventListener('change', async () => {
