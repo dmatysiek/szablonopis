@@ -22,6 +22,7 @@ const loginPass2   = document.getElementById('loginPass2');
 const confirmRow   = document.getElementById('confirmRow');
 
 const loginSubmit  = document.getElementById('loginSubmit');
+const resetRow     = document.getElementById('resetRow');
 const resetLink    = document.getElementById('resetLink');
 const switchRow    = document.getElementById('switchRow');
 const switchLink   = document.getElementById('switchLink');
@@ -94,6 +95,10 @@ function setMode(m){
   const isReg = (mode === 'register');
   confirmRow.style.display = isReg ? 'block' : 'none';
   loginSubmit.textContent  = isReg ? 'Zarejestruj' : 'Zaloguj';
+
+  // Pokaż reset tylko w logowaniu
+  if (resetRow) resetRow.style.display = isReg ? 'none' : 'block';
+  
   // zdanie pod formularzem
   if (isReg){
     switchRow.firstChild.textContent = 'Masz już konto? ';
