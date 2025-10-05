@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc — Sprzedaż</title>
-  <link rel="manifest" href="manifest.webmanifest?v=40">
+  <link rel="manifest" href="manifest.webmanifest?v=41">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=40">
+  <link rel="stylesheet" href="styles.css?v=41">
 </head>
 <body>
   <div class="topbar">
@@ -52,7 +52,7 @@
           <input id="s-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0" placeholder="np. 89.00">
         </div>
 
-        <!-- NOWE: zdjęcie opcjonalnie -->
+        <!-- Zdjęcie opcjonalnie -->
         <div class="field">
           <label>Zdjęcie (opcjonalnie)</label>
           <input id="s-photo" class="control" type="file" accept="image/*">
@@ -97,9 +97,53 @@
     </div>
   </div>
 
-  <script type="module" src="sales.js?v=39"></script>
+  <!-- MODAL EDYCJI -->
+  <div id="editModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+      <div class="modal-header">
+        <div id="editTitle" class="title">Edytuj pozycję</div>
+        <button class="icon-btn close" id="eCancelTop" title="Zamknij">✖</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>Data sprzedaży</label>
+          <input id="e-date" class="control" type="date">
+        </div>
+        <div class="field">
+          <label>Nazwa przedmiotu</label>
+          <input id="e-name" class="control" type="text">
+        </div>
+        <div class="field">
+          <label>Koszt (PLN)</label>
+          <input id="e-cost" class="control" type="number" inputmode="decimal" step="0.01" min="0">
+        </div>
+        <div class="field">
+          <label>Przychód (PLN)</label>
+          <input id="e-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0">
+        </div>
+
+        <div class="field">
+          <label>Zdjęcie</label>
+          <input id="e-photo" class="control" type="file" accept="image/*">
+          <div id="ePhotoPreview" class="photo-preview"></div>
+          <div class="btn-row" style="margin-top:8px;">
+            <button id="eClearPhoto" class="btn small">Usuń zdjęcie</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:12px;">
+        <button id="eSave" class="btn">Zapisz zmiany</button>
+        <button id="eCancel" class="btn secondary">Anuluj</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="sales.js?v=40"></script>
   <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=40');
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=41');
   </script>
 </body>
 </html>
