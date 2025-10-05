@@ -8,16 +8,13 @@ const avatarInitials = document.getElementById('avatarInitials');
 const menuInitials   = document.getElementById('menuInitials');
 const menuEmail      = document.getElementById('menuEmail');
 const menuStatus     = document.getElementById('menuStatus');
-const loginBtn       = document.getElementById('loginBtn');   // w menu
-const logoutBtn      = document.getElementById('logoutBtn');  // w menu
+const loginBtn       = document.getElementById('loginBtn');
+const logoutBtn      = document.getElementById('logoutBtn');
 
 // ---------- Modal ----------
-const loginModal   = document.getElementById('loginModal');
-const loginCancel  = document.getElementById('loginCancel');
+const loginModal     = document.getElementById('loginModal');
+const loginCancel    = document.getElementById('loginCancel');
 const loginCancelTop = document.getElementById('loginCancelTop');
-
-const tabLogin     = document.getElementById('tabLogin');
-const tabRegister  = document.getElementById('tabRegister');
 
 const loginEmail   = document.getElementById('loginEmail');
 const loginPass    = document.getElementById('loginPass');
@@ -25,7 +22,9 @@ const loginPass2   = document.getElementById('loginPass2');
 const confirmRow   = document.getElementById('confirmRow');
 
 const loginSubmit  = document.getElementById('loginSubmit');
-const resetLinkBtn = document.getElementById('resetLink');
+const resetLink    = document.getElementById('resetLink');
+const switchRow    = document.getElementById('switchRow');
+const switchLink   = document.getElementById('switchLink');
 
 // ---------- Pomocnicze ----------
 function initialsFromEmail(email){
@@ -60,20 +59,17 @@ function renderUser(user){
 // ---------- Menu konta ----------
 function openMenu(){ accountMenu.hidden = false; }
 function closeMenu(){ accountMenu.hidden = true; }
-
 avatarBtn.addEventListener('click', (e) => {
   e.stopPropagation();
   accountMenu.hidden ? openMenu() : closeMenu();
 });
-
-// klik poza menu -> zamknij
 document.addEventListener('click', (e) => {
   if (accountMenu.hidden) return;
   const inside = accountMenu.contains(e.target) || avatarBtn.contains(e.target);
   if (!inside) closeMenu();
 });
 
-// ---------- Modal (otwieranie/zamykanie) ----------
+// ---------- Modal ----------
 function openLoginModal(defaultMode='login'){
   setMode(defaultMode);
   loginModal.classList.add('open');
@@ -84,7 +80,6 @@ function closeLoginModal(){
   loginModal.classList.remove('open');
   loginModal.setAttribute('aria-hidden','true');
 }
-
 loginBtn.addEventListener('click', () => { closeMenu(); openLoginModal('login'); });
 loginCancel.addEventListener('click', closeLoginModal);
 loginCancelTop.addEventListener('click', closeLoginModal);
@@ -92,20 +87,26 @@ loginModal.addEventListener('click', (e) => {
   if (e.target.classList?.contains('modal-backdrop')) closeLoginModal();
 });
 
-// ---------- Przełączanie trybów (login/register) ----------
-let mode = 'login'; // 'login' | 'register'
+// ---------- Tryby: login / register ----------
+let mode = 'login';
 function setMode(m){
   mode = m;
   const isReg = (mode === 'register');
   confirmRow.style.display = isReg ? 'block' : 'none';
   loginSubmit.textContent  = isReg ? 'Zarejestruj' : 'Zaloguj';
-
-  // styl przycisków zakładek
-  tabLogin.classList.toggle('secondary', isReg);
-  tabRegister.classList.toggle('secondary', !isReg);
+  // zdanie pod formularzem
+  if (isReg){
+    switchRow.firstChild.textContent = 'Masz już konto? ';
+    switchLink.textContent = 'Zaloguj się';
+  } else {
+    switchRow.firstChild.textContent = 'Nie masz jeszcze konta? ';
+    switchLink.textContent = 'Zarejestruj się tutaj';
+  }
 }
-tabLogin.addEventListener('click', () => setMode('login'));
-tabRegister.addEventListener('click', () => setMode('register'));
+switchLink.addEventListener('click', (e) => {
+  e.preventDefault();
+  setMode(mode === 'login' ? 'register' : 'login');
+});
 
 // ---------- Akcje: logowanie / rejestracja / reset ----------
 loginSubmit.addEventListener('click', async () => {
@@ -123,7 +124,7 @@ loginSubmit.addEventListener('click', async () => {
       if (pass !== pass2){ alert('Hasła nie są takie same.'); return; }
       const { error } = await supabase.auth.signUp({
         email, password: pass,
-        options: { emailRedirectTo: location.origin + location.pathname } // po potwierdzeniu
+        options: { emailRedirectTo: location.origin + location.pathname }
       });
       if (error) throw error;
       alert('Sprawdź e-mail i potwierdź rejestrację.');
@@ -134,7 +135,8 @@ loginSubmit.addEventListener('click', async () => {
   }
 });
 
-resetLinkBtn.addEventListener('click', async () => {
+resetLink.addEventListener('click', async (e) => {
+  e.preventDefault();
   const email = (loginEmail.value || '').trim();
   if (!email){ alert('Podaj e-mail, żeby wysłać link resetu.'); return; }
   try{
@@ -155,11 +157,10 @@ logoutBtn.addEventListener('click', async () => {
   closeMenu();
 });
 
-// ---------- Inicjalizacja sesji ----------
+// ---------- Inicjalizacja ----------
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
   renderUser(session?.user || null);
-
   supabase.auth.onAuthStateChange((_event, session) => {
     renderUser(session?.user || null);
   });
