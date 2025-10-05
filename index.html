@@ -3,257 +3,106 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-  <title>QuickDesc</title>
-  <link rel="manifest" href="manifest.webmanifest?v=36">
+  <title>QuickDesc — Opis</title>
+  <link rel="manifest" href="manifest.webmanifest?v=38">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
-
-  <style>
-    :root{
-      color-scheme: light dark;
-      --bg: #0b0b0c;
-      --card: #141416;
-      --card-2: #111113;
-      --border: rgba(255,255,255,.08);
-      --border-strong: rgba(255,255,255,.14);
-      --text: #e9e9ea;
-      --text-dim: #b8b8bb;
-      --accent: #21c0a5;
-      --shadow: 0 12px 30px rgba(0,0,0,.35);
-      --radius: 14px;
-      --radius-sm: 10px;
-    }
-    *{ box-sizing: border-box; }
-    html{ -webkit-text-size-adjust: 100%; }
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    .wrap{ max-width: 760px; margin: 0 auto; padding: 18px 16px 28px; }
-
-    /* Topbar */
-    .topbar{
-      position: sticky; top: 0; z-index: 5;
-      background: linear-gradient(180deg, #0b0b0c, rgba(11,11,12,.92));
-      backdrop-filter: saturate(140%) blur(8px);
-      border-bottom: 1px solid var(--border);
-    }
-    .topbar-inner{ max-width: 760px; margin: 0 auto; padding: 12px 16px 10px; }
-    .title{ font-size: 20px; font-weight: 600; letter-spacing:.2px; }
-    .tabs{ margin-top:8px; display:flex; gap:8px; }
-    .tab{
-      padding:8px 12px; border-radius:10px; border:1px solid var(--border);
-      background:#141416; color:var(--text); font-weight:600; cursor:pointer;
-      transition: background .15s ease, border-color .15s ease;
-      touch-action: manipulation;
-    }
-    .tab.active{ border-color: var(--border-strong); background:#1a1b1e; }
-
-    /* Karty */
-    .card{
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-    .card-pad{ padding: 16px; }
-    .card + .card{ margin-top: 18px; }
-
-    /* Form / Kontrolki */
-    .form-grid{ display: grid; gap: 14px; }
-    .field label{
-      display:block; font-size: 13px; color: var(--text-dim); margin: 0 0 6px;
-    }
-    .control{
-      width:100%;
-      height: 46px;
-      padding: 10px 12px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      background: var(--card-2);
-      color: var(--text);
-      font-size: 17px; /* >=16px -> brak auto-zoomu */
-      -webkit-text-fill-color: var(--text);
-      outline: none;
-      transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-      touch-action: manipulation; /* domyślnie szybkie tapy */
-    }
-    input[type="number"].control{ touch-action: pan-y; } /* przewijanie bez focusa */
-    .control:focus{
-      border-color: var(--border-strong);
-      box-shadow: 0 0 0 3px rgba(33,192,165,.12);
-      background: #151619;
-    }
-    select.control option{ color:var(--text); background: var(--card-2); }
-
-    .checkbox-row{
-      display:flex; align-items:center; gap:10px;
-      padding: 8px 0 0;
-      margin-bottom: 12px; /* odstęp gdy pole wyłączone */
-    }
-    .checkbox-row input[type="checkbox"]{
-      width:18px; height:18px; margin:0; accent-color: var(--accent);
-    }
-    #uwagiLabel{ display:none; margin: 0; }
-
-    /* Placeholdery – subtelnie szare (również iOS) */
-    input.control::placeholder, textarea.control::placeholder{
-      color: rgba(232,232,236,.50) !important; opacity: 1;
-    }
-    input.control::-webkit-input-placeholder, textarea.control::-webkit-input-placeholder{
-      color: rgba(232,232,236,.50) !important; -webkit-text-fill-color: rgba(232,232,236,.50) !important; opacity: 1;
-    }
-
-    /* Podgląd */
-    pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line-height:1.45; letter-spacing:.1px; }
-
-    /* Przycisk */
-    .btn{
-      display:block; width:100%;
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      background: #1a1b1e;
-      color: var(--text); font-weight: 600;
-      cursor:pointer;
-      transition: background .15s ease, transform .05s ease, border-color .15s ease;
-      touch-action: manipulation;
-    }
-    .btn:hover{ background:#1d2024; border-color: var(--border-strong); }
-    .btn:active{ transform: scale(.99); }
-    .btn-row{ display:flex; gap:10px; flex-wrap:wrap; }
-    .btn.small{ padding: 10px 12px; font-weight:600; }
-
-    /* Tabela sprzedaży */
-    .table{
-      width:100%; border-collapse: collapse; font-size:15px;
-    }
-    .table th, .table td{
-      padding: 10px 8px; border-bottom: 1px solid var(--border);
-    }
-    .table th{ text-align:left; font-weight:600; color: var(--text-dim); }
-    .table td.num{ text-align:right; font-variant-numeric: tabular-nums; }
-    .row-actions{ text-align:right; white-space:nowrap; }
-    .icon-btn{
-      background: transparent; border: 1px solid var(--border);
-      padding: 6px 10px; border-radius: 10px; cursor: pointer; color: var(--text);
-    }
-    .totals{
-      margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border);
-      display: grid; grid-template-columns: 1fr auto; row-gap:6px;
-      font-size: 15px;
-    }
-    .totals b{ font-weight:700; }
-    .muted{ color: var(--text-dim); }
-  </style>
+  <link rel="stylesheet" href="styles.css?v=38">
 </head>
 <body>
-
-  <!-- TOPBAR z zakładkami -->
   <div class="topbar">
     <div class="topbar-inner">
       <div class="title">QuickDesc</div>
       <div class="tabs">
-        <button class="tab" data-view="desc">Opis</button>
-        <button class="tab" data-view="sales">Sprzedaż</button>
+        <a class="tab active" href="./index.html">Opis</a>
+        <a class="tab" href="./sales.html">Sprzedaż</a>
       </div>
     </div>
   </div>
 
   <div class="wrap">
+    <div class="card card-pad">
+      <div class="form-grid">
 
-    <!-- WIDOK 1: OPIS -->
-    <section id="view-desc">
-      <div class="card card-pad">
-        <div class="form-grid">
-
-          <div class="field">
-            <label>Stan</label>
-            <select id="stan" class="control">
-              <option value="Dobry">Dobry</option>
-              <option value="Bardzo dobry" selected>Bardzo dobry</option>
-              <option value="Nowy bez metki">Nowy bez metki</option>
-              <option value="Nowy z metką">Nowy z metką</option>
-              <option value="Świetny, jak nowy">Świetny, jak nowy</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Rozmiar</label>
-            <select id="rozmiar" class="control">
-              <option value="XS">XS</option>
-              <option value="S" selected>S</option>
-              <option value="M">M</option>
-              <option value="L">L</option>
-              <option value="XL">XL</option>
-              <option value="Damski XS">Damski XS</option>
-              <option value="Damski S">Damski S</option>
-              <option value="Damski M">Damski M</option>
-              <option value="Damski L">Damski L</option>
-              <option value="Damski XL">Damski XL</option>
-              <option value="Męski XS">Męski XS</option>
-              <option value="Męski S">Męski S</option>
-              <option value="Męski M">Męski M</option>
-              <option value="Męski L">Męski L</option>
-              <option value="Męski XL">Męski XL</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label>Kolor</label>
-            <select id="kolor" class="control">
-              <option value="Czarny" selected>Czarny</option>
-              <option value="Biały">Biały</option>
-              <option value="Szary">Szary</option>
-              <option value="Brązowy">Brązowy</option>
-              <option value="Niebieski">Niebieski</option>
-              <option value="Granatowy">Granatowy</option>
-              <option value="Zielony">Zielony</option>
-              <option value="Burgundowy">Burgundowy</option>
-              <option value="Fioletowy">Fioletowy</option>
-              <option value="Czerwony">Czerwony</option>
-              <option value="Beżowy">Beżowy</option>
-              <option value="Kremowy">Kremowy</option>
-              <option value="Różowy">Różowy</option>
-              <option value="Żółty">Żółty</option>
-            </select>
-          </div>
-
-          <label class="checkbox-row" id="uwagiRow">
-            <input type="checkbox" id="uwagiOn">
-            Dodatkowa linijka?
-          </label>
-
-          <div class="field" id="uwagiLabel">
-            <label>Treść dodatkowej informacji…</label>
-            <input id="uwagiText" class="control" type="text" placeholder="np. Bluza ma plamę na rękawie">
-          </div>
-
-          <div class="field">
-            <label>Długość całkowita (cm)</label>
-            <input id="dlugosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
-          </div>
-
-          <div class="field">
-            <label>Szerokość pod pachami (cm)</label>
-            <input id="szerokosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
-          </div>
-
-          <div class="field">
-            <label>Długość od pachy do końca rękawa (cm)</label>
-            <input id="rekaw" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
-          </div>
-
+        <div class="field">
+          <label>Stan</label>
+          <select id="stan" class="control">
+            <option value="Dobry">Dobry</option>
+            <option value="Bardzo dobry" selected>Bardzo dobry</option>
+            <option value="Nowy bez metki">Nowy bez metki</option>
+            <option value="Nowy z metką">Nowy z metką</option>
+            <option value="Świetny, jak nowy">Świetny, jak nowy</option>
+          </select>
         </div>
-      </div>
 
-      <!-- Podgląd -->
-      <div class="card card-pad">
+        <div class="field">
+          <label>Rozmiar</label>
+          <select id="rozmiar" class="control">
+            <option value="XS">XS</option>
+            <option value="S" selected>S</option>
+            <option value="M">M</option>
+            <option value="L">L</option>
+            <option value="XL">XL</option>
+            <option value="Damski XS">Damski XS</option>
+            <option value="Damski S">Damski S</option>
+            <option value="Damski M">Damski M</option>
+            <option value="Damski L">Damski L</option>
+            <option value="Damski XL">Damski XL</option>
+            <option value="Męski XS">Męski XS</option>
+            <option value="Męski S">Męski S</option>
+            <option value="Męski M">Męski M</option>
+            <option value="Męski L">Męski L</option>
+            <option value="Męski XL">Męski XL</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Kolor</label>
+          <select id="kolor" class="control">
+            <option value="Czarny" selected>Czarny</option>
+            <option value="Biały">Biały</option>
+            <option value="Szary">Szary</option>
+            <option value="Brązowy">Brązowy</option>
+            <option value="Niebieski">Niebieski</option>
+            <option value="Granatowy">Granatowy</option>
+            <option value="Zielony">Zielony</option>
+            <option value="Burgundowy">Burgundowy</option>
+            <option value="Fioletowy">Fioletowy</option>
+            <option value="Czerwony">Czerwony</option>
+            <option value="Beżowy">Beżowy</option>
+            <option value="Kremowy">Kremowy</option>
+            <option value="Różowy">Różowy</option>
+            <option value="Żółty">Żółty</option>
+          </select>
+        </div>
+
+        <label class="checkbox-row" id="uwagiRow">
+          <input type="checkbox" id="uwagiOn"> Dodatkowa linijka?
+        </label>
+
+        <div class="field" id="uwagiLabel">
+          <label>Treść dodatkowej informacji…</label>
+          <input id="uwagiText" class="control" type="text" placeholder="np. Bluza ma plamę na rękawie">
+        </div>
+
+        <div class="field">
+          <label>Długość całkowita (cm)</label>
+          <input id="dlugosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 65" value="65" data-suffix="cm">
+        </div>
+        <div class="field">
+          <label>Szerokość pod pachami (cm)</label>
+          <input id="szerokosc" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 56" value="56" data-suffix="cm">
+        </div>
+        <div class="field">
+          <label>Długość od pachy do końca rękawa (cm)</label>
+          <input id="rekaw" class="control" type="number" inputmode="decimal" step="1" min="0" placeholder="np. 52" value="52" data-suffix="cm">
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card card-pad">
 <pre>
 🌟 Stan: <b><span id="v-stan"></span></b>
 👕 Rozmiar: <b><span id="v-rozmiar"></span></b>
@@ -268,363 +117,13 @@
 
 #nike #bluza #kaptur #męska #damska #man #woman #hoodie #crewneck #sweatshirt #vintage #unisex #swoosh #air #max #adidas #retro #zipped #oversize #y2k
 </pre>
-        <button id="copy" class="btn" style="margin-top:12px;">Kopiuj opis</button>
-      </div>
-    </section>
-
-    <!-- WIDOK 2: SPRZEDAŻ -->
-    <section id="view-sales" style="display:none">
-      <!-- Filtr miesiąc/rok -->
-      <div class="card card-pad">
-        <div class="form-grid">
-          <div class="field">
-            <label>Miesiąc</label>
-            <input id="monthPicker" class="control" type="month" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Formularz dodawania pozycji -->
-      <div class="card card-pad">
-        <div class="form-grid">
-          <div class="field">
-            <label>Data sprzedaży</label>
-            <input id="s-date" class="control" type="date">
-          </div>
-          <div class="field">
-            <label>Nazwa przedmiotu</label>
-            <input id="s-name" class="control" type="text" placeholder="np. Bluza Nike Vintage">
-          </div>
-          <div class="field">
-            <label>Koszt (PLN)</label>
-            <input id="s-cost" class="control" type="number" inputmode="decimal" step="0.01" min="0" placeholder="np. 40.00">
-          </div>
-          <div class="field">
-            <label>Przychód (PLN)</label>
-            <input id="s-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0" placeholder="np. 89.00">
-          </div>
-          <button id="addSale" class="btn">Dodaj pozycję</button>
-        </div>
-      </div>
-
-      <!-- Lista i sumy -->
-      <div class="card card-pad">
-        <div class="muted" style="margin-bottom:8px;">Pozycje dla wybranego miesiąca</div>
-        <div style="overflow-x:auto;">
-          <table class="table" id="salesTable">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Nazwa</th>
-                <th class="num">Koszt</th>
-                <th class="num">Przychód</th>
-                <th class="num">Dochód</th>
-                <th class="row-actions">Akcje</th>
-              </tr>
-            </thead>
-            <tbody id="salesTbody">
-              <!-- wiersze -->
-            </tbody>
-          </table>
-        </div>
-
-        <div class="totals" id="totalsBox">
-          <div class="muted">Suma kosztów</div><div class="num" id="t-cost">0,00 zł</div>
-          <div class="muted">Suma przychodów</div><div class="num" id="t-rev">0,00 zł</div>
-          <div><b>Dochód</b></div><div class="num"><b id="t-profit">0,00 zł</b></div>
-        </div>
-
-        <div class="btn-row" style="margin-top:12px;">
-          <button id="exportCsv" class="btn small">Eksport CSV</button>
-          <button id="clearMonth" class="btn small" style="border-color:rgba(255,0,0,.25)">Wyczyść miesiąc</button>
-        </div>
-      </div>
-    </section>
-
+      <button id="copy" class="btn" style="margin-top:12px;">Kopiuj opis</button>
+    </div>
   </div>
 
+  <script type="module" src="desc.js?v=38"></script>
   <script>
-    /* ====== WSPÓLNE: generator opisu ====== */
-    const LS_KEY = "szablonopis_v1";
-
-    const pairs = [
-      ["stan", "v-stan"],
-      ["rozmiar", "v-rozmiar"],
-      ["kolor", "v-kolor"],
-      ["dlugosc", "v-dlugosc"],
-      ["szerokosc", "v-szerokosc"],
-      ["rekaw", "v-rekaw"],
-    ];
-
-    const saved = JSON.parse(localStorage.getItem(LS_KEY) || "{}");
-    const state = {};
-
-    // Nawigacja zakładek
-    const tabs = document.querySelectorAll('.tab');
-    const views = { desc: document.getElementById('view-desc'), sales: document.getElementById('view-sales') };
-    function show(view){
-      if(!views[view]) view = 'desc';
-      Object.entries(views).forEach(([k,el])=> el.style.display = (k===view) ? '' : 'none');
-      tabs.forEach(btn => btn.classList.toggle('active', btn.dataset.view===view));
-      try { localStorage.setItem('qd_last_view', view); } catch(_){}
-      if (location.hash !== '#'+view) history.replaceState(null,'','#'+view);
-    }
-    tabs.forEach(btn => btn.addEventListener('click', () => show(btn.dataset.view)));
-    window.addEventListener('hashchange', () => show(location.hash.replace('#','') || 'desc'));
-    const startView = (location.hash.replace('#','')) || localStorage.getItem('qd_last_view') || 'desc';
-    show(startView);
-
-    // Opcjonalna linijka (Opis)
-    const uwagiOn    = document.getElementById("uwagiOn");
-    const uwagiText  = document.getElementById("uwagiText");
-    const uwagiWrap  = document.getElementById("v-uwagi-wrap");
-    const uwagiSpan  = document.getElementById("v-uwagi");
-    const uwagiLabel = document.getElementById("uwagiLabel");
-    const uwagiRow   = document.getElementById("uwagiRow");
-
-    if (uwagiOn && saved.uwagiOn) uwagiOn.checked = true;
-    if (uwagiText && typeof saved.uwagiText === "string") uwagiText.value = saved.uwagiText;
-
-    function renderUwagi() {
-      if (!uwagiOn || !uwagiText || !uwagiLabel || !uwagiWrap || !uwagiSpan || !uwagiRow) return;
-      const enabled = uwagiOn.checked;
-      const txt = (uwagiText.value || "").trim();
-      state.uwagiOn = enabled;
-      state.uwagiText = uwagiText.value || "";
-      if (enabled) { uwagiRow.style.marginBottom = "0px"; uwagiLabel.style.display = "block"; uwagiLabel.style.margin = "0 0 12px 0"; }
-      else { uwagiLabel.style.display = "none"; uwagiRow.style.marginBottom = "12px"; }
-      if (enabled && txt) { uwagiSpan.textContent = txt; uwagiWrap.style.display = "inline"; }
-      else { uwagiSpan.textContent = ""; uwagiWrap.style.display = "none"; }
-    }
-    uwagiOn?.addEventListener("change", () => { renderUwagi(); scheduleSave(); });
-    uwagiText?.addEventListener("input", () => { renderUwagi(); scheduleSave(); });
-    renderUwagi();
-
-    // Pola formularza (Opis)
-    for (const [inputId, viewId] of pairs) {
-      const input = document.getElementById(inputId);
-      const view  = document.getElementById(viewId);
-      if (!input || !view) continue;
-
-      if (saved[inputId] !== undefined) input.value = saved[inputId];
-
-      const renderValue = () => {
-        const raw = input.value?.toString().trim();
-        const suffix = input.dataset.suffix || "";
-        view.textContent = raw ? (suffix ? `${raw}${suffix}` : raw) : "";
-        state[inputId] = input.value;
-      };
-      renderValue();
-
-      input.addEventListener("input", () => { renderValue(); scheduleSave(); });
-
-      // iOS: kiedy przełączasz selecty, wyczyść focus poprzedniego
-      document.addEventListener('pointerdown', (ev) => {
-        const t = ev.target;
-        const isSelect = el => el && el.tagName === 'SELECT';
-        if (isSelect(t)) {
-          const ae = document.activeElement;
-          if (isSelect(ae) && ae !== t) { try { ae.blur(); } catch (_) {} }
-        }
-      }, true);
-    }
-
-    // Auto-select tylko przy TAPIE (nie przy przewijaniu) dla pól liczbowych
-    ["dlugosc","szerokosc","rekaw"].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      let startX = 0, startY = 0, moved = false, t0 = 0;
-      const THRESHOLD = 6, TAP_TIME = 300;
-      const selectAll = () => { try { el.select(); } catch(_){} };
-      el.addEventListener("pointerdown", (e) => { startX=e.clientX||0; startY=e.clientY||0; moved=false; t0=e.timeStamp||Date.now(); });
-      el.addEventListener("pointermove", (e) => { const dx=Math.abs((e.clientX||0)-startX), dy=Math.abs((e.clientY||0)-startY); if (dx>THRESHOLD||dy>THRESHOLD) moved=true; });
-      el.addEventListener("pointerup", (e) => { const dt=(e.timeStamp||Date.now())-t0; if (!moved && dt<TAP_TIME) { if (document.activeElement!==el) el.focus(); setTimeout(selectAll,0);} });
-      el.addEventListener("focus", () => setTimeout(selectAll, 0));
-    });
-
-    let saveTimer = null;
-    function scheduleSave() {
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(() => { localStorage.setItem(LS_KEY, JSON.stringify(state)); }, 150);
-    }
-
-    document.getElementById("copy").addEventListener("click", async () => {
-      const pre = document.querySelector("#view-desc .card pre") || document.querySelector("pre");
-      const text = pre ? pre.innerText : "";
-      try { await navigator.clipboard.writeText(text);
-        const btn = document.getElementById("copy");
-        const old = btn.textContent; btn.textContent = "Skopiowano ✓";
-        setTimeout(()=> btn.textContent = old, 1200);
-      } catch { alert("Nie udało się skopiować. Zaznacz tekst ręcznie i użyj Ctrl/Cmd+C."); }
-    });
-
-    /* ====== SPRZEDAŻ: logika ====== */
-    const SALES_KEY = 'qd_sales_v1';
-    const sales = JSON.parse(localStorage.getItem(SALES_KEY) || '[]'); // [{id,date,name,cost,rev}]
-    const monthPicker = document.getElementById('monthPicker');
-    const nf = new Intl.NumberFormat('pl-PL', { minimumFractionDigits:2, maximumFractionDigits:2 });
-
-    // Ustaw domyślny miesiąc: ostatnio użyty lub bieżący
-    const now = new Date();
-    const curMonthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-    const lastMonth = localStorage.getItem('qd_last_month') || curMonthStr;
-    monthPicker.value = lastMonth;
-
-    // Domyślna data sprzedaży: dziś
-    const sDate = document.getElementById('s-date');
-    const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-    sDate.value = todayStr;
-
-    // Pola formularza sprzedaży
-    const sName = document.getElementById('s-name');
-    const sCost = document.getElementById('s-cost');
-    const sRev  = document.getElementById('s-rev');
-
-    // Auto-select na tap dla liczb w sprzedaży
-    ["s-cost","s-rev"].forEach(id => {
-      const el = document.getElementById(id);
-      let startX=0,startY=0,moved=false,t0=0; const TH=6, TT=300;
-      const selectAll=()=>{ try{el.select()}catch(_){ } };
-      el.addEventListener("pointerdown",(e)=>{ startX=e.clientX||0; startY=e.clientY||0; moved=false; t0=e.timeStamp||Date.now(); });
-      el.addEventListener("pointermove",(e)=>{ const dx=Math.abs((e.clientX||0)-startX), dy=Math.abs((e.clientY||0)-startY); if(dx>TH||dy>TH)moved=true; });
-      el.addEventListener("pointerup",(e)=>{ const dt=(e.timeStamp||Date.now())-t0; if(!moved&&dt<TT){ if(document.activeElement!==el) el.focus(); setTimeout(selectAll,0);} });
-      el.addEventListener("focus",()=>setTimeout(selectAll,0));
-    });
-
-    // Render listy i sum
-    const tbody = document.getElementById('salesTbody');
-    const tCost = document.getElementById('t-cost');
-    const tRev  = document.getElementById('t-rev');
-    const tProfit = document.getElementById('t-profit');
-
-    function saveSales(){ localStorage.setItem(SALES_KEY, JSON.stringify(sales)); }
-
-    function monthOf(dStr){ return dStr ? dStr.slice(0,7) : ''; }
-
-    function renderSales(){
-      const m = monthPicker.value || curMonthStr;
-      localStorage.setItem('qd_last_month', m);
-      tbody.innerHTML = '';
-      let sumC=0, sumR=0;
-
-      // posortuj malejąco po dacie
-      const items = sales.filter(x => monthOf(x.date)===m)
-                         .sort((a,b)=> (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
-
-      for (const it of items){
-        const profit = (+it.rev||0) - (+it.cost||0);
-        sumC += (+it.cost||0);
-        sumR += (+it.rev||0);
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${it.date}</td>
-          <td>${escapeHtml(it.name || '')}</td>
-          <td class="num">${nf.format(+it.cost||0)} zł</td>
-          <td class="num">${nf.format(+it.rev||0)} zł</td>
-          <td class="num">${nf.format(profit)} zł</td>
-          <td class="row-actions">
-            <button class="icon-btn" data-del="${it.id}" title="Usuń">🗑️</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      }
-
-      tCost.textContent   = `${nf.format(sumC)} zł`;
-      tRev.textContent    = `${nf.format(sumR)} zł`;
-      tProfit.textContent = `${nf.format(sumR - sumC)} zł`;
-    }
-
-    function escapeHtml(s){
-      return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
-    }
-
-    // Dodawanie pozycji
-    document.getElementById('addSale').addEventListener('click', () => {
-      const date = sDate.value || todayStr;
-      const name = (sName.value || '').trim();
-      const cost = parseFloat(String(sCost.value).replace(',','.')) || 0;
-      const rev  = parseFloat(String(sRev.value).replace(',','.')) || 0;
-
-      if (!name){ alert('Podaj nazwę przedmiotu.'); return; }
-
-      sales.push({ id: Date.now().toString(36)+Math.random().toString(36).slice(2,7), date, name, cost, rev });
-      saveSales();
-
-      // wyczyść nazwy/kwoty, data zostaje
-      sName.value = '';
-      sCost.value = '';
-      sRev.value  = '';
-      renderSales();
-    });
-
-    // Kasowanie pojedynczego wiersza (delegacja)
-    tbody.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-del]');
-      if (!btn) return;
-      const id = btn.getAttribute('data-del');
-      const idx = sales.findIndex(x => x.id === id);
-      if (idx >= 0){
-        if (confirm('Usunąć tę pozycję?')){
-          sales.splice(idx,1);
-          saveSales();
-          renderSales();
-        }
-      }
-    });
-
-    // Wyczyść miesiąc
-    document.getElementById('clearMonth').addEventListener('click', () => {
-      const m = monthPicker.value || curMonthStr;
-      const has = sales.some(x => monthOf(x.date)===m);
-      if (!has){ alert('Brak pozycji w tym miesiącu.'); return; }
-      if (confirm(`Usunąć wszystkie pozycje dla ${m}?`)){
-        for (let i=sales.length-1;i>=0;i--){
-          if (monthOf(sales[i].date)===m) sales.splice(i,1);
-        }
-        saveSales();
-        renderSales();
-      }
-    });
-
-    // Eksport CSV
-    document.getElementById('exportCsv').addEventListener('click', () => {
-      const m = monthPicker.value || curMonthStr;
-      const rows = sales.filter(x => monthOf(x.date)===m)
-                        .sort((a,b)=> (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
-      const header = ['Data','Nazwa','Koszt','Przychód','Dochód'];
-      const lines = [header.join(';')];
-      rows.forEach(r => {
-        const profit = (+r.rev||0) - (+r.cost||0);
-        lines.push([r.date, r.name.replaceAll(';',','), (r.cost||0), (r.rev||0), profit].join(';'));
-      });
-      const csv = lines.join('\n');
-      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `sprzedaz_${m}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    });
-
-    monthPicker.addEventListener('change', renderSales);
-
-    // Startowy render
-    renderSales();
-
-    // Zapis stanu generatora opisu przy wyjściu
-    window.addEventListener("beforeunload", () => {
-      localStorage.setItem(LS_KEY, JSON.stringify(state));
-    });
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=36');
-    }
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=38');
   </script>
 </body>
 </html>
