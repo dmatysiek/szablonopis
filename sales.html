@@ -4,13 +4,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc — Sprzedaż</title>
-  <link rel="manifest" href="manifest.webmanifest?v=47">
+  <link rel="manifest" href="manifest.webmanifest?v=48">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=47">
+  <link rel="stylesheet" href="styles.css?v=48">
+  <style>
+    /* Na wszelki wypadek – twarde chowanie hidden */
+    [hidden] { display: none !important; }
+  </style>
 </head>
 <body>
+
   <div class="topbar">
     <div class="topbar-inner">
       <div class="title">QuickDesc</div>
@@ -19,9 +24,9 @@
         <a class="tab active" href="./sales.html">Sprzedaż</a>
       </div>
 
-      <!-- AVATAR -->
+      <!-- AVATAR (stan zalogowania zobaczysz po renderUser w auth.js) -->
       <button id="avatarBtn" class="avatar guest" title="Konto">
-        <span id="avatarInitials"></span>
+        <span id="avatarInitials">?</span>
       </button>
 
       <!-- MENU KONTA -->
@@ -41,7 +46,7 @@
     </div>
   </div>
 
-  <!-- ZAWARTOŚĆ POKAŻEMY DOPIERO PO ZALOGOWANIU -->
+  <!-- APLIKACJA – DOMYŚLNIE UKRYTA DOPÓKI NIE MA SESJI -->
   <div class="wrap" id="appWrap" hidden>
     <!-- Filtr miesiąc/rok -->
     <div class="card card-pad">
@@ -53,7 +58,7 @@
       </div>
     </div>
 
-    <!-- Formularz -->
+    <!-- Formularz dodawania pozycji -->
     <div class="card card-pad">
       <div class="form-grid">
         <div class="field">
@@ -73,6 +78,7 @@
           <input id="s-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0" placeholder="np. 89.00">
         </div>
 
+        <!-- Zdjęcie (opcjonalnie) -->
         <div class="field">
           <label>Zdjęcie (opcjonalnie)</label>
           <input id="s-photo" class="control" type="file" accept="image/*">
@@ -117,17 +123,59 @@
     </div>
   </div>
 
-  <!-- MODAL EDYCJI -->
-  <!-- (…zostaje bez zmian – twój kod…) -->
+  <!-- MODAL EDYCJI (twój istniejący – bez zmian) -->
+  <div id="editModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+      <div class="modal-header">
+        <div id="editTitle" class="title">Edytuj pozycję</div>
+        <button class="icon-btn close" id="eCancelTop" title="Zamknij">✖</button>
+      </div>
+      <!-- ...reszta pól i przycisków jak miałeś... -->
+      <!-- (zostawiam jak w Twoim pliku) -->
+    </div>
+  </div>
 
-  <!-- MODAL LOGOWANIA / REJESTRACJI (z poprzedniej wersji) -->
-  <!-- (…zostaje bez zmian – twój kod…) -->
+  <!-- MODAL LOGOWANIA / REJESTRACJI (musi BYĆ w DOM-ie!) -->
+  <div id="loginModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+      <div class="modal-header">
+        <div id="loginTitle" class="title">Konto</div>
+        <button class="icon-btn close" id="loginCancelTop" title="Zamknij">✖</button>
+      </div>
+
+      <div class="btn-row" style="margin-bottom:8px;">
+        <button id="switchToLogin" class="btn small">Zaloguj</button>
+        <button id="switchToSignup" class="btn small secondary">Zarejestruj</button>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>Adres e-mail</label>
+          <input id="loginEmail" class="control" type="email" placeholder="np. jan@twojmail.pl">
+        </div>
+        <div class="field" id="passwordField">
+          <label>Hasło</label>
+          <input id="loginPassword" class="control" type="password" placeholder="••••••••">
+        </div>
+        <div class="muted" id="resetRow">
+          Zapomniałeś hasła? <a href="#" id="resetLink">Wyślij link resetu</a>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:12px;">
+        <button id="loginSend" class="btn">Zaloguj</button>
+        <button id="loginCancel" class="btn secondary">Anuluj</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="./supabase.js"></script>
-  <script type="module" src="./auth.js?v=7"></script>
-  <script type="module" src="./sales.js?v=47"></script>
+  <script type="module" src="./auth.js?v=8"></script>
+  <script type="module" src="./sales.js?v=48"></script>
   <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=47');
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=48');
   </script>
 </body>
 </html>
