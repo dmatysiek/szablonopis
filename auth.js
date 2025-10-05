@@ -1,7 +1,7 @@
 // auth.js
 import { supabase } from './supabase.js';
 
-// Elementy UI
+// --- Elementy UI (sales.html ma te ID) ---
 const avatarBtn      = document.getElementById('avatarBtn');
 const accountMenu    = document.getElementById('accountMenu');
 const avatarInitials = document.getElementById('avatarInitials');
@@ -12,71 +12,36 @@ const menuStatus     = document.getElementById('menuStatus');
 const loginBtn  = document.getElementById('loginBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 
-// Modal logowania/rejestracji
+// Modal i pola
 const loginModal     = document.getElementById('loginModal');
 const loginEmail     = document.getElementById('loginEmail');
 const loginPassword  = document.getElementById('loginPassword');
-const signupEmail    = document.getElementById('signupEmail');
-const signupPassword = document.getElementById('signupPassword');
 
-// Przełączniki widoków w modalu
-const viewLoginBtn   = document.getElementById('viewLoginBtn');
-const viewSignupBtn  = document.getElementById('viewSignupBtn');
-const loginView      = document.getElementById('loginView');
-const signupView     = document.getElementById('signupView');
-const forgotLink     = document.getElementById('forgotLink');
-const resetEmail     = document.getElementById('resetEmail');
-const resetSend      = document.getElementById('resetSend');
+const switchToLogin  = document.getElementById('switchToLogin');
+const switchToSignup = document.getElementById('switchToSignup');
+const loginSend      = document.getElementById('loginSend');
+const loginCancel    = document.getElementById('loginCancel');
+const loginCancelTop = document.getElementById('loginCancelTop');
+const resetLink      = document.getElementById('resetLink');
 
-// Przyciski akcji
-const loginSend  = document.getElementById('loginSend');
-const signupSend = document.getElementById('signupSend');
-const loginCancel     = document.getElementById('loginCancel');
-const loginCancelTop  = document.getElementById('loginCancelTop');
+// --- Stan trybu modala: "login" | "signup" ---
+let authMode = 'login';
 
-// Helpers modala
-function openLogin() {
-  if (!loginModal) return;
-  showLoginView();                    // domyślnie login
-  loginModal.classList.add('open');
-  loginModal.setAttribute('aria-hidden', 'false');
-  setTimeout(() => loginEmail?.focus(), 0);
-}
-function closeLogin() {
-  if (!loginModal) return;
-  loginModal.classList.remove('open');
-  loginModal.setAttribute('aria-hidden', 'true');
-}
-function openMenu(){ accountMenu.hidden = false; }
-function closeMenu(){ accountMenu.hidden = true; }
-
-// Widoki w modalu
-function showLoginView(){
-  loginView?.classList.remove('hidden');
-  signupView?.classList.add('hidden');
-}
-function showSignupView(){
-  signupView?.classList.remove('hidden');
-  loginView?.classList.add('hidden');
-}
-
-// Inicjały z maila
 function initialsFromEmail(email){
   if (!email) return '?';
-  const name = email.split('@')[0] || '';
+  const name = (email.split('@')[0] || '').trim();
   const parts = name.replace(/[^\p{L}\p{N}_-]+/gu, ' ')
-                    .trim().split(/[\.\_\- ]+/);
+                    .split(/[\.\_\- ]+/).filter(Boolean);
   const a = (parts[0]?.[0] || '').toUpperCase();
   const b = (parts[1]?.[0] || '').toUpperCase();
   return (a + (b || '')).slice(0,2) || '?';
 }
 
-// Render stanu użytkownika
 function renderUser(user){
   if (user){
     avatarBtn?.classList.remove('guest');
     const email = user.email || '(brak email)';
-    const ini = initialsFromEmail(email);
+    const ini   = initialsFromEmail(email);
     if (avatarInitials) avatarInitials.textContent = ini;
     if (menuInitials)   menuInitials.textContent   = ini;
     if (menuEmail)      menuEmail.textContent      = email;
@@ -94,71 +59,63 @@ function renderUser(user){
   }
 }
 
-// Klik na avatarze
+// --- Modal helpers ---
+function openLogin(){
+  if (!loginModal) return;
+  setMode('login');
+  loginModal.classList.add('open');
+  loginModal.setAttribute('aria-hidden','false');
+  setTimeout(()=> loginEmail?.focus(), 0);
+}
+function openSignup(){
+  if (!loginModal) return;
+  setMode('signup');
+  loginModal.classList.add('open');
+  loginModal.setAttribute('aria-hidden','false');
+  setTimeout(()=> loginEmail?.focus(), 0);
+}
+function closeLogin(){
+  if (!loginModal) return;
+  loginModal.classList.remove('open');
+  loginModal.setAttribute('aria-hidden','true');
+}
+function openMenu(){ accountMenu.hidden = false; }
+function closeMenu(){ accountMenu.hidden = true; }
+
+function setMode(m){
+  authMode = m; // 'login' | 'signup'
+  if (m === 'login'){
+    switchToLogin?.classList.remove('secondary');
+    switchToSignup?.classList.add('secondary');
+    if (loginSend) loginSend.textContent = 'Zaloguj';
+  } else {
+    switchToSignup?.classList.remove('secondary');
+    switchToLogin?.classList.add('secondary');
+    if (loginSend) loginSend.textContent = 'Zarejestruj';
+  }
+}
+
+// --- Zdarzenia UI ---
 avatarBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
-  // Gość? Otwórz od razu modal logowania
-  if (avatarBtn.classList.contains('guest')) {
-    openLogin();
-    return;
-  }
-  // Zalogowany: pokaż/ukryj menu konta
+  if (avatarBtn.classList.contains('guest')) { openLogin(); return; }
   accountMenu.hidden ? openMenu() : closeMenu();
 });
-
-// Zamknięcie menu po kliknięciu poza
 document.addEventListener('click', (e) => {
   if (accountMenu.hidden) return;
   const inside = accountMenu.contains(e.target) || avatarBtn.contains(e.target);
   if (!inside) closeMenu();
 });
 
-// Przełączniki widoków
-viewLoginBtn?.addEventListener('click', showLoginView);
-viewSignupBtn?.addEventListener('click', showSignupView);
+switchToLogin?.addEventListener('click', () => setMode('login'));
+switchToSignup?.addEventListener('click', () => setMode('signup'));
 
-// Zamknięcia modala
 loginCancel?.addEventListener('click', closeLogin);
 loginCancelTop?.addEventListener('click', closeLogin);
 loginModal?.addEventListener('click', (e) => {
   if (e.target.classList?.contains('modal-backdrop')) closeLogin();
 });
 
-// Logowanie (email+hasło)
-loginSend?.addEventListener('click', async () => {
-  const email = (loginEmail?.value || '').trim();
-  const pass  = (loginPassword?.value || '').trim();
-  if (!email || !pass){ alert('Podaj e-mail i hasło.'); return; }
-
-  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-  if (error){ alert('Błąd logowania: ' + error.message); return; }
-  closeLogin(); closeMenu();
-});
-
-// Rejestracja (email+hasło)
-signupSend?.addEventListener('click', async () => {
-  const email = (signupEmail?.value || '').trim();
-  const pass  = (signupPassword?.value || '').trim();
-  if (!email || !pass){ alert('Podaj e-mail i hasło.'); return; }
-
-  const { error } = await supabase.auth.signUp({ email, password: pass });
-  if (error){ alert('Błąd rejestracji: ' + error.message); return; }
-  alert('Konto utworzone. Sprawdź e-mail (potwierdzenie) i zaloguj się.');
-  showLoginView();
-});
-
-// Reset hasła (tylko na widoku logowania)
-forgotLink?.addEventListener('click', async (e) => {
-  e.preventDefault();
-  const email = (resetEmail?.value || loginEmail?.value || '').trim();
-  if (!email){ alert('Podaj adres e-mail do resetu.'); return; }
-  const redirectTo = location.origin + location.pathname; // wraca na tę stronę
-  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
-  if (error){ alert('Błąd resetu: ' + error.message); return; }
-  alert('Wysłaliśmy link do resetu hasła. Sprawdź skrzynkę.');
-});
-
-// Główne przyciski menu
 loginBtn?.addEventListener('click', () => { closeMenu(); openLogin(); });
 logoutBtn?.addEventListener('click', async () => {
   await supabase.auth.signOut();
@@ -166,11 +123,41 @@ logoutBtn?.addEventListener('click', async () => {
   closeMenu();
 });
 
-// Inicjalizacja: wykryj sesję i reaguj na zmiany
+// --- Akcje auth ---
+loginSend?.addEventListener('click', async () => {
+  const email = (loginEmail?.value || '').trim();
+  const pass  = (loginPassword?.value || '').trim();
+  if (!email || !pass){ alert('Podaj e-mail i hasło.'); return; }
+
+  if (authMode === 'login'){
+    const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+    if (error){ alert('Błąd logowania: ' + error.message); return; }
+    closeLogin(); closeMenu();
+  } else {
+    const { data, error } = await supabase.auth.signUp({ email, password: pass });
+    if (error){ alert('Błąd rejestracji: ' + error.message); return; }
+    // Jeśli w projekcie aktywne jest potwierdzanie maila,
+    // użytkownik musi kliknąć link w e-mailu.
+    alert('Konto utworzone. Sprawdź e-mail (potwierdzenie), a potem zaloguj się.');
+    setMode('login');
+  }
+});
+
+// Reset hasła (wyśle link na e-mail)
+resetLink?.addEventListener('click', async (e) => {
+  e.preventDefault();
+  const email = (loginEmail?.value || '').trim();
+  if (!email){ alert('Podaj adres e-mail do resetu.'); return; }
+  const redirectTo = location.origin + location.pathname; // powrót na tę stronę
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+  if (error){ alert('Błąd resetu: ' + error.message); return; }
+  alert('Wysłaliśmy link do resetu hasła. Sprawdź skrzynkę.');
+});
+
+// --- Inicjalizacja i nasłuch stanu sesji ---
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
   renderUser(session?.user || null);
-
   supabase.auth.onAuthStateChange((_event, session) => {
     renderUser(session?.user || null);
   });
