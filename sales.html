@@ -4,21 +4,42 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc — Sprzedaż</title>
-  <link rel="manifest" href="manifest.webmanifest?v=41">
+  <link rel="manifest" href="manifest.webmanifest?v=42">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="styles.css?v=41">
 </head>
 <body>
+  
   <div class="topbar">
-    <div class="topbar-inner">
-      <div class="title">QuickDesc</div>
-      <div class="tabs">
-        <a class="tab" href="./index.html">Opis</a>
-        <a class="tab active" href="./sales.html">Sprzedaż</a>
+  <div class="topbar-inner">
+    <div class="title">QuickDesc</div>
+    <div class="tabs">
+      <a class="tab" href="./index.html">Opis</a>
+      <a class="tab active" href="./sales.html">Sprzedaż</a>
+    </div>
+  
+    <!-- AVATAR -->
+    <button id="avatarBtn" class="avatar" title="Konto">
+      <span id="avatarInitials">?</span>
+    </button>
+  
+    <!-- PANEL KONTA -->
+    <div id="accountMenu" class="account-menu" hidden>
+      <div class="account-row">
+        <div class="avatar sm"><span id="menuInitials">?</span></div>
+        <div class="account-info">
+          <div id="menuEmail" class="muted">Niezalogowany</div>
+          <div id="menuStatus" class="muted">—</div>
+        </div>
+      </div>
+      <div class="menu-actions">
+        <button id="loginBtn" class="btn small">Zaloguj</button>
+        <button id="logoutBtn" class="btn small secondary">Wyloguj</button>
       </div>
     </div>
+  </div>
   </div>
 
   <div class="wrap">
@@ -141,9 +162,36 @@
     </div>
   </div>
 
+  <!-- MODAL LOGOWANIA -->
+  <div id="loginModal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop"></div>
+    <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+      <div class="modal-header">
+        <div id="loginTitle" class="title">Zaloguj się</div>
+        <button class="icon-btn close" id="loginCancelTop" title="Zamknij">✖</button>
+      </div>
+    
+      <div class="form-grid">
+        <div class="field">
+          <label>Adres e-mail</label>
+          <input id="loginEmail" class="control" type="email" placeholder="np. jan@twojmail.pl">
+        </div>
+        <div class="muted">Wyślemy Ci link do logowania. Kliknij go na tym urządzeniu.</div>
+      </div>
+    
+      <div class="btn-row" style="margin-top:12px;">
+        <button id="loginSend" class="btn">Wyślij magic link</button>
+        <button id="loginCancel" class="btn secondary">Anuluj</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./supabase.js"></script>
+  <script type="module" src="./auth.js?v=1"></script>
+  <script type="module" src="./sales.js?v=40"></script>
   <script type="module" src="sales.js?v=40"></script>
   <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=41');
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=42');
   </script>
 </body>
 </html>
