@@ -3,6 +3,8 @@ import { supabase } from './supabase.js';
 
 // --- DOM ---
 const wrap = document.getElementById('appWrap');
+wrap.hidden = true; // ukryj UI do momentu potwierdzenia sesji
+
 const monthPicker = document.getElementById('monthPicker');
 const tbody  = document.getElementById('salesTbody');
 const tCost  = document.getElementById('t-cost');
@@ -66,7 +68,7 @@ supabase.auth.onAuthStateChange((_ev, session) => {
 // --- Storage (opcjonalne zdjęcia) ---
 async function uploadPhotoIfAny(file){
   if (!file) return null;
-  // wymaga bucketu "qd-photos" (Public) – patrz instrukcja
+  // bucket „qd-photos” musi istnieć (Public Read)
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
   const path = `${UID}/${crypto.randomUUID()}.${ext}`;
   const { data, error } = await supabase.storage.from('qd-photos').upload(path, file, {
@@ -194,7 +196,7 @@ async function loadMonth(ym){
 }
 
 // --- Add ---
-addBtn.addEventListener('click', async () => {
+addBtn?.addEventListener('click', async () => {
   if (!UID) { openLogin(); return; }
   const sold_at = (inDate.value || '').trim();
   const name    = (inName.value || '').trim();
@@ -209,14 +211,12 @@ addBtn.addEventListener('click', async () => {
 
   const row = await insertRow({ sold_at, name, cost, revenue, photo_url });
   if (row){
-    // szybkie odświeżenie listy
     await loadMonth(currentYM);
-    // reset formu
     inName.value=''; inCost.value=''; inRev.value=''; inPhoto.value=''; photoPreview.innerHTML='';
   }
 });
 
-// podgląd miniatury (lokalnie)
+// mini-podgląd zdjęcia (lokalnie)
 inPhoto?.addEventListener('change', () => {
   photoPreview.innerHTML = '';
   const f = inPhoto.files?.[0];
@@ -228,11 +228,13 @@ inPhoto?.addEventListener('change', () => {
   photoPreview.appendChild(img);
 });
 
-// --- Export CSV (z bieżących „rows”) ---
-exportBtn.addEventListener('click', () => {
+// --- Export CSV ---
+exportBtn?.addEventListener('click', () => {
   const lines = [['#','data','nazwa','koszt','przychod','dochod']];
   rows.forEach((r,i)=> lines.push([
-    i+1, r.sold_at, r.name, String(r.cost).replace('.',','), String(r.revenue).replace('.',','), String((r.revenue||0)-(r.cost||0)).replace('.',',')
+    i+1, r.sold_at, r.name,
+    String(r.cost).replace('.',','), String(r.revenue).replace('.',','),
+    String((r.revenue||0)-(r.cost||0)).replace('.',',')
   ]));
   const csv = lines.map(a => a.map(v => `"${String(v).replace(/"/g,'""')}"`).join(';')).join('\n');
   const blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
@@ -242,21 +244,18 @@ exportBtn.addEventListener('click', () => {
   a.click(); URL.revokeObjectURL(a.href);
 });
 
-// --- Clear month (usuń wszystkie rekordy danego miesiąca) ---
-clearBtn.addEventListener('click', async () => {
+// --- Clear month ---
+clearBtn?.addEventListener('click', async () => {
   if (!UID || !currentYM) return;
   if (!confirm('Na pewno usunąć wszystkie pozycje w tym miesiącu?')) return;
   const { from, to } = monthRange(currentYM);
   const { error } = await supabase.from('sales')
-    .delete()
-    .eq('user_id', UID)
-    .gte('sold_at', from)
-    .lt('sold_at',  to);
+    .delete().eq('user_id', UID).gte('sold_at', from).lt('sold_at', to);
   if (error){ alert('Błąd czyszczenia: ' + error.message); return; }
   await loadMonth(currentYM);
 });
 
-// --- Edit modal (użyj swoich istniejących elementów / handlerów) ---
+// --- Edit modal ---
 let editing = null;
 const eModal = document.getElementById('editModal');
 const eDate  = document.getElementById('e-date');
@@ -286,7 +285,7 @@ function openEdit(r){
 }
 function closeEdit(){ editing=null; eModal.classList.remove('open'); eModal.setAttribute('aria-hidden','true'); }
 
-eSave.addEventListener('click', async () => {
+eSave?.addEventListener('click', async () => {
   if (!editing) return;
   let patch = {
     sold_at: eDate.value,
@@ -301,28 +300,29 @@ eSave.addEventListener('click', async () => {
   const updated = await updateRow(editing.id, patch);
   if (updated){ closeEdit(); await loadMonth(currentYM); }
 });
-eCancel.addEventListener('click', closeEdit);
-eCancelTop.addEventListener('click', closeEdit);
-eModal.addEventListener('click', (e)=> { if (e.target.classList?.contains('modal-backdrop')) closeEdit(); });
-eClearPhoto.addEventListener('click', async () => {
+eCancel?.addEventListener('click', closeEdit);
+eCancelTop?.addEventListener('click', closeEdit);
+eModal?.addEventListener('click', (e)=> {
+  if (e.target.classList?.contains('modal-backdrop')) closeEdit();
+});
+eClearPhoto?.addEventListener('click', async () => {
   if (!editing) return;
   if (confirm('Usunąć zdjęcie z rekordu?')){
     const updated = await updateRow(editing.id, { photo_url: null });
-    if (updated){ await loadMonth(currentYM); openEdit(updated); } // odśwież podgląd
+    if (updated){ await loadMonth(currentYM); openEdit(updated); }
   }
 });
 
 // --- Start ---
 (async () => {
   const uid = await ensureLoggedIn();
-  if (!uid) return;        // pokaże modal i wstrzyma UI
-  // ustaw domyślny miesiąc = bieżący
+  if (!uid) return; // modal otwarty, czekamy na logowanie
   const now = new Date();
   const ym = ymKey(now);
   monthPicker.value = ym;
   await loadMonth(ym);
 })();
-monthPicker.addEventListener('change', async () => {
+monthPicker?.addEventListener('change', async () => {
   if (!UID) return;
   await loadMonth(monthPicker.value);
 });
