@@ -21,10 +21,29 @@ const photoPreview = document.getElementById('photoPreview');
 enableTapSelect(sCost);
 enableTapSelect(sRev);
 
-const tbody = document.getElementById('salesTbody');
-const tCost = document.getElementById('t-cost');
-const tRev  = document.getElementById('t-rev');
+const tbody   = document.getElementById('salesTbody');
+const tCost   = document.getElementById('t-cost');
+const tRev    = document.getElementById('t-rev');
 const tProfit = document.getElementById('t-profit');
+
+// ---- Modal Edycji ----
+const editModal     = document.getElementById('editModal');
+const eDate         = document.getElementById('e-date');
+const eName         = document.getElementById('e-name');
+const eCost         = document.getElementById('e-cost');
+const eRev          = document.getElementById('e-rev');
+const ePhoto        = document.getElementById('e-photo');
+const ePhotoPreview = document.getElementById('ePhotoPreview');
+const eSave         = document.getElementById('eSave');
+const eCancel       = document.getElementById('eCancel');
+const eCancelTop    = document.getElementById('eCancelTop');
+const eClearPhoto   = document.getElementById('eClearPhoto');
+
+enableTapSelect(eCost);
+enableTapSelect(eRev);
+
+let currentEditId = null;
+let markClearPhoto = false;
 
 function saveSales(){ saveLocal(SALES_KEY, sales); }
 function monthOf(dStr){ return dStr ? dStr.slice(0,7) : ''; }
@@ -46,25 +65,21 @@ async function fileToThumb(file, targetW=300, targetH=400, quality=0.85){
     im.src = dataUrl;
   });
 
-  // canvas cover (object-fit: cover)
   const canvas = document.createElement('canvas');
   canvas.width = targetW; canvas.height = targetH;
   const ctx = canvas.getContext('2d');
-
   const scale = Math.max(targetW / img.width, targetH / img.height);
   const dw = img.width * scale;
   const dh = img.height * scale;
   const dx = (targetW - dw) / 2;
   const dy = (targetH - dh) / 2;
-
-  ctx.fillStyle = '#000'; // tło, gdyby były paski
+  ctx.fillStyle = '#000';
   ctx.fillRect(0,0,targetW,targetH);
   ctx.drawImage(img, dx, dy, dw, dh);
-
   return canvas.toDataURL('image/jpeg', quality);
 }
 
-// Podgląd wybranego zdjęcia (miniatura)
+// Podgląd zdjęcia przy dodawaniu
 sPhoto.addEventListener('change', async () => {
   photoPreview.innerHTML = '';
   const f = sPhoto.files?.[0];
@@ -91,7 +106,7 @@ function renderSales(){
                      .sort((a,b)=> (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
   items.forEach((it, idx) => {
-    const seq = idx + 1; // numeracja od 1 w obrębie miesiąca (widokowa)
+    const seq = idx + 1;
     const profit = (+it.rev||0) - (+it.cost||0);
     sumC += (+it.cost||0);
     sumR += (+it.rev||0);
@@ -106,6 +121,7 @@ function renderSales(){
       <td class="num">${nf.format(+it.rev||0)} zł</td>
       <td class="num">${nf.format(profit)} zł</td>
       <td class="row-actions">
+        <button class="icon-btn" data-edit="${it.id}" title="Edytuj">✏️</button>
         <button class="icon-btn" data-del="${it.id}" title="Usuń">🗑️</button>
       </td>
     `;
@@ -125,12 +141,9 @@ document.getElementById('addSale').addEventListener('click', async () => {
   const rev  = parseFloat(String(sRev.value).replace(',','.')) || 0;
   if (!name){ alert('Podaj nazwę przedmiotu.'); return; }
 
-  // jeśli jest zdjęcie -> zrób miniaturę
   let photo = null;
   const f = sPhoto.files?.[0];
-  if (f) {
-    try { photo = await fileToThumb(f); } catch { photo = null; }
-  }
+  if (f) { try { photo = await fileToThumb(f); } catch { photo = null; } }
 
   sales.push({
     id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
@@ -138,7 +151,6 @@ document.getElementById('addSale').addEventListener('click', async () => {
   });
   saveSales();
 
-  // czyść pola
   sName.value = '';
   sCost.value = '';
   sRev.value  = '';
@@ -148,60 +160,121 @@ document.getElementById('addSale').addEventListener('click', async () => {
   renderSales();
 });
 
-// Kasowanie
+// Obsługa akcji w tabeli (edit/delete)
 tbody.addEventListener('click', (e) => {
-  const btn = e.target.closest('button[data-del]');
-  if (!btn) return;
-  const id = btn.getAttribute('data-del');
-  const idx = sales.findIndex(x => x.id === id);
-  if (idx >= 0){
-    if (confirm('Usunąć tę pozycję?')){
+  const delBtn = e.target.closest('button[data-del]');
+  const editBtn = e.target.closest('button[data-edit]');
+  if (delBtn){
+    const id = delBtn.getAttribute('data-del');
+    const idx = sales.findIndex(x => x.id === id);
+    if (idx >= 0 && confirm('Usunąć tę pozycję?')){
       sales.splice(idx,1);
       saveSales();
       renderSales();
     }
+    return;
+  }
+  if (editBtn){
+    const id = editBtn.getAttribute('data-edit');
+    openEdit(id);
   }
 });
 
-// Wyczyść miesiąc
-document.getElementById('clearMonth').addEventListener('click', () => {
-  const m = monthPicker.value || curMonthStr;
-  const has = sales.some(x => monthOf(x.date)===m);
-  if (!has){ alert('Brak pozycji w tym miesiącu.'); return; }
-  if (confirm(`Usunąć wszystkie pozycje dla ${m}?`)){
-    for (let i=sales.length-1;i>=0;i--){
-      if (monthOf(sales[i].date)===m) sales.splice(i,1);
-    }
-    saveSales();
-    renderSales();
+// ---------- MODAL: logika ----------
+
+function openEdit(id){
+  const it = sales.find(x => x.id === id);
+  if (!it) return;
+  currentEditId = id;
+  markClearPhoto = false;
+
+  eDate.value = it.date || '';
+  eName.value = it.name || '';
+  eCost.value = (it.cost ?? '') === '' ? '' : String(it.cost);
+  eRev.value  = (it.rev  ?? '') === '' ? '' : String(it.rev);
+
+  ePhoto.value = '';
+  ePhotoPreview.innerHTML = '';
+  if (it.photo){
+    const img = document.createElement('img');
+    img.className = 'thumb';
+    img.src = it.photo;
+    img.alt = 'miniatura';
+    ePhotoPreview.appendChild(img);
+  }
+
+  editModal.setAttribute('aria-hidden','false');
+  editModal.classList.add('open');
+}
+
+function closeEdit(){
+  currentEditId = null;
+  markClearPhoto = false;
+  ePhoto.value = '';
+  ePhotoPreview.innerHTML = '';
+  editModal.classList.remove('open');
+  editModal.setAttribute('aria-hidden','true');
+}
+
+eCancel.addEventListener('click', closeEdit);
+eCancelTop.addEventListener('click', closeEdit);
+editModal.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-backdrop')) closeEdit();
+});
+
+// podgląd nowo wybranego zdjęcia w edycji
+ePhoto.addEventListener('change', async () => {
+  markClearPhoto = false;
+  ePhotoPreview.innerHTML = '';
+  const f = ePhoto.files?.[0];
+  if (!f) return;
+  try{
+    const thumb = await fileToThumb(f);
+    const img = document.createElement('img');
+    img.className = 'thumb';
+    img.src = thumb;
+    img.alt = 'miniatura';
+    ePhotoPreview.appendChild(img);
+  } catch {
+    alert('Nie udało się przetworzyć zdjęcia.');
   }
 });
 
-// Eksport CSV (dodajemy kolumnę # na początku, zdjęć nie eksportujemy)
-document.getElementById('exportCsv').addEventListener('click', () => {
-  const m = monthPicker.value || curMonthStr;
-  const rows = sales.filter(x => monthOf(x.date)===m)
-                    .sort((a,b)=> (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+// usuń zdjęcie (nieobowiązkowe)
+eClearPhoto.addEventListener('click', (e) => {
+  e.preventDefault();
+  ePhoto.value = '';
+  ePhotoPreview.innerHTML = '';
+  markClearPhoto = true;
+});
 
-  const header = ['#','Data','Nazwa','Koszt','Przychód','Dochód'];
-  const lines = [header.join(';')];
+// zapisz zmiany
+eSave.addEventListener('click', async () => {
+  if (!currentEditId) return;
+  const it = sales.find(x => x.id === currentEditId);
+  if (!it) return;
 
-  rows.forEach((r, idx) => {
-    const profit = (+r.rev||0) - (+r.cost||0);
-    const seq = idx + 1;
-    lines.push([seq, r.date, r.name.replaceAll(';',','), (r.cost||0), (r.rev||0), profit].join(';'));
-  });
+  const name = (eName.value || '').trim();
+  if (!name){ alert('Podaj nazwę przedmiotu.'); return; }
 
-  const csv = lines.join('\n');
-  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `sprzedaz_${m}.csv`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  it.date = eDate.value || it.date;
+  it.name = name;
+  it.cost = parseFloat(String(eCost.value).replace(',','.'));
+  if (isNaN(it.cost)) it.cost = 0;
+  it.rev  = parseFloat(String(eRev.value).replace(',','.'));
+  if (isNaN(it.rev)) it.rev = 0;
+
+  // foto: albo wybrano nowe, albo zaznaczono „usuń”
+  const f = ePhoto.files?.[0];
+  if (f){
+    try { it.photo = await fileToThumb(f); } catch { /* bez zmian */ }
+  } else if (markClearPhoto){
+    it.photo = null;
+  }
+
+  saveSales();
+  renderSales();
+  closeEdit();
 });
 
 monthPicker.addEventListener('change', renderSales);
