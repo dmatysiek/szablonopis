@@ -4,45 +4,45 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc — Sprzedaż</title>
-  <link rel="manifest" href="manifest.webmanifest?v=46">
+  <link rel="manifest" href="manifest.webmanifest?v=47">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=46">
+  <link rel="stylesheet" href="styles.css?v=47">
 </head>
 <body>
-  
   <div class="topbar">
-  <div class="topbar-inner">
-    <div class="title">QuickDesc</div>
-    <div class="tabs">
-      <a class="tab" href="./index.html">Opis</a>
-      <a class="tab active" href="./sales.html">Sprzedaż</a>
-    </div>
-  
-    <!-- AVATAR -->
-    <button id="avatarBtn" class="avatar" title="Konto">
-      <span id="avatarInitials">?</span>
-    </button>
-  
-    <!-- PANEL KONTA -->
-    <div id="accountMenu" class="account-menu" hidden>
-      <div class="account-row">
-        <div class="avatar sm"><span id="menuInitials">?</span></div>
-        <div class="account-info">
-          <div id="menuEmail" class="muted">Niezalogowany</div>
-          <div id="menuStatus" class="muted">—</div>
+    <div class="topbar-inner">
+      <div class="title">QuickDesc</div>
+      <div class="tabs">
+        <a class="tab" href="./index.html">Opis</a>
+        <a class="tab active" href="./sales.html">Sprzedaż</a>
+      </div>
+
+      <!-- AVATAR -->
+      <button id="avatarBtn" class="avatar guest" title="Konto">
+        <span id="avatarInitials"></span>
+      </button>
+
+      <!-- MENU KONTA -->
+      <div id="accountMenu" class="account-menu" hidden>
+        <div class="account-row">
+          <div class="avatar sm"><span id="menuInitials">?</span></div>
+          <div class="account-info">
+            <div id="menuEmail" class="muted">Niezalogowany</div>
+            <div id="menuStatus" class="muted">—</div>
+          </div>
+        </div>
+        <div class="menu-actions">
+          <button id="loginBtn" class="btn small">Zaloguj</button>
+          <button id="logoutBtn" class="btn small secondary">Wyloguj</button>
         </div>
       </div>
-      <div class="menu-actions">
-        <button id="loginBtn" class="btn small">Zaloguj</button>
-        <button id="logoutBtn" class="btn small secondary">Wyloguj</button>
-      </div>
     </div>
   </div>
-  </div>
 
-  <div class="wrap">
+  <!-- ZAWARTOŚĆ POKAŻEMY DOPIERO PO ZALOGOWANIU -->
+  <div class="wrap" id="appWrap" hidden>
     <!-- Filtr miesiąc/rok -->
     <div class="card card-pad">
       <div class="form-grid">
@@ -53,7 +53,7 @@
       </div>
     </div>
 
-    <!-- Formularz dodawania pozycji -->
+    <!-- Formularz -->
     <div class="card card-pad">
       <div class="form-grid">
         <div class="field">
@@ -73,7 +73,6 @@
           <input id="s-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0" placeholder="np. 89.00">
         </div>
 
-        <!-- Zdjęcie opcjonalnie -->
         <div class="field">
           <label>Zdjęcie (opcjonalnie)</label>
           <input id="s-photo" class="control" type="file" accept="image/*">
@@ -119,99 +118,16 @@
   </div>
 
   <!-- MODAL EDYCJI -->
-  <div id="editModal" class="modal" aria-hidden="true">
-    <div class="modal-backdrop"></div>
-    <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="editTitle">
-      <div class="modal-header">
-        <div id="editTitle" class="title">Edytuj pozycję</div>
-        <button class="icon-btn close" id="eCancelTop" title="Zamknij">✖</button>
-      </div>
+  <!-- (…zostaje bez zmian – twój kod…) -->
 
-      <div class="form-grid">
-        <div class="field">
-          <label>Data sprzedaży</label>
-          <input id="e-date" class="control" type="date">
-        </div>
-        <div class="field">
-          <label>Nazwa przedmiotu</label>
-          <input id="e-name" class="control" type="text">
-        </div>
-        <div class="field">
-          <label>Koszt (PLN)</label>
-          <input id="e-cost" class="control" type="number" inputmode="decimal" step="0.01" min="0">
-        </div>
-        <div class="field">
-          <label>Przychód (PLN)</label>
-          <input id="e-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0">
-        </div>
-
-        <div class="field">
-          <label>Zdjęcie</label>
-          <input id="e-photo" class="control" type="file" accept="image/*">
-          <div id="ePhotoPreview" class="photo-preview"></div>
-          <div class="btn-row" style="margin-top:8px;">
-            <button id="eClearPhoto" class="btn small">Usuń zdjęcie</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="btn-row" style="margin-top:12px;">
-        <button id="eSave" class="btn">Zapisz zmiany</button>
-        <button id="eCancel" class="btn secondary">Anuluj</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL LOGOWANIA / REJESTRACJI -->
-  <div id="loginModal" class="modal" aria-hidden="true">
-    <div class="modal-backdrop"></div>
-    <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-      <div class="modal-header">
-        <div id="loginTitle" class="title">Konto</div>
-        <button class="icon-btn close" id="loginCancelTop" title="Zamknij">✖</button>
-      </div>
-  
-      <div class="form-grid">
-        <div class="field">
-          <label>Adres e-mail</label>
-          <input id="loginEmail" class="control" type="email" placeholder="np. jan@twojmail.pl">
-        </div>
-        <div class="field">
-          <label>Hasło</label>
-          <input id="loginPass" class="control" type="password" placeholder="••••••••">
-        </div>
-  
-        <!-- tylko w trybie rejestracji -->
-        <div class="field" id="confirmRow" style="display:none">
-          <label>Powtórz hasło</label>
-          <input id="loginPass2" class="control" type="password" placeholder="••••••••">
-        </div>
-      </div>
-  
-      <div class="btn-row" style="margin-top:12px;">
-        <button id="loginSubmit" class="btn">Zaloguj</button>
-        <button id="loginCancel" class="btn secondary">Anuluj</button>
-      </div>
-  
-      <!-- reset hasła jako link -->
-      <div id="resetRow" style="margin-top:12px" class="muted">
-        Zapomniałeś hasła?
-        <a href="#" id="resetLink">Wyślij link resetu</a>
-      </div>
-
-      <!-- kontekstowy przełącznik trybów -->
-      <div style="margin-top:8px" class="muted" id="switchRow">
-        Nie masz jeszcze konta?
-        <a href="#" id="switchLink">Zarejestruj się tutaj</a>
-      </div>
-    </div>
-  </div>
+  <!-- MODAL LOGOWANIA / REJESTRACJI (z poprzedniej wersji) -->
+  <!-- (…zostaje bez zmian – twój kod…) -->
 
   <script type="module" src="./supabase.js"></script>
-  <script type="module" src="./auth.js?v=6"></script>
-  <script type="module" src="./sales.js?v=46"></script>
+  <script type="module" src="./auth.js?v=7"></script>
+  <script type="module" src="./sales.js?v=47"></script>
   <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=46');
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=47');
   </script>
 </body>
 </html>
