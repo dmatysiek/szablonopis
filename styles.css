@@ -162,3 +162,45 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
   white-space: nowrap;
   text-align: right;
 }
+
+/* przyciski mniejsze/sekundarne */
+.btn.small{ padding: 10px 12px; font-weight: 600; border-radius: var(--radius-sm); }
+.btn.secondary{ background:#17181b; border-color: var(--border); }
+.btn.secondary:hover{ background:#1b1d21; }
+
+/* miniatury (tabela) 3:4 */
+.thumb{
+  width: 36px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #000;
+  display: block;
+}
+.photo-preview{ margin-top: 8px; }
+.photo-preview .thumb{ width: 60px; height: 80px; }
+
+/* modal */
+.modal{
+  position: fixed; inset: 0; display: none;
+}
+.modal.open{ display: block; }
+.modal-backdrop{
+  position: absolute; inset:0; background: rgba(0,0,0,.5); backdrop-filter: blur(2px);
+}
+.modal-dialog{
+  position: absolute; left:50%; top:50%; transform: translate(-50%,-50%);
+  width: min(640px, calc(100vw - 24px));
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+}
+.modal-header{
+  display:flex; align-items:center; justify-content:space-between; margin-bottom: 10px;
+}
+.icon-btn{
+  background: transparent; border: 1px solid var(--border);
+  color: var(--text); padding: 6px 10px; border-radius: 10px; cursor: pointer;
+}
+.icon-btn.close{ padding: 6px 8px; }
+.icon-btn:hover{ border-color: var(--border-strong); }
