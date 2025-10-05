@@ -204,3 +204,41 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 }
 .icon-btn.close{ padding: 6px 8px; }
 .icon-btn:hover{ border-color: var(--border-strong); }
+
+/* Avatar w prawym górnym rogu */
+.avatar{
+  position: relative;
+  margin-left: auto;
+  margin-right: 0;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: #1a1b1e;
+  color: var(--text);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 14px;
+  cursor: pointer;
+}
+.avatar:hover{ border-color: var(--border-strong); }
+.avatar.sm{ width: 28px; height: 28px; font-size: 12px; }
+
+/* Panel konta (dropdown) */
+.account-menu{
+  position: absolute;
+  right: 16px;
+  top: 60px;
+  width: 260px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px;
+  z-index: 10;
+}
+.account-row{ display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.account-info .muted{ font-size: 12px; }
+.menu-actions{ display: flex; gap: 8px; }
+
+/* Naprawa kontekstu topbara (pozycjonowanie avatara/panelu) */
+.topbar-inner{ position: relative; display: flex; align-items: center; gap: 12px; }
+.tabs{ margin-left: 8px; }
