@@ -1,171 +1,176 @@
 // auth.js
 import { supabase } from './supabase.js';
 
-// ---------- Uchwyty UI (topbar) ----------
+// Elementy UI
 const avatarBtn      = document.getElementById('avatarBtn');
 const accountMenu    = document.getElementById('accountMenu');
 const avatarInitials = document.getElementById('avatarInitials');
 const menuInitials   = document.getElementById('menuInitials');
 const menuEmail      = document.getElementById('menuEmail');
 const menuStatus     = document.getElementById('menuStatus');
-const loginBtn       = document.getElementById('loginBtn');
-const logoutBtn      = document.getElementById('logoutBtn');
 
-// ---------- Modal ----------
+const loginBtn  = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+
+// Modal logowania/rejestracji
 const loginModal     = document.getElementById('loginModal');
-const loginCancel    = document.getElementById('loginCancel');
-const loginCancelTop = document.getElementById('loginCancelTop');
+const loginEmail     = document.getElementById('loginEmail');
+const loginPassword  = document.getElementById('loginPassword');
+const signupEmail    = document.getElementById('signupEmail');
+const signupPassword = document.getElementById('signupPassword');
 
-const loginEmail   = document.getElementById('loginEmail');
-const loginPass    = document.getElementById('loginPass');
-const loginPass2   = document.getElementById('loginPass2');
-const confirmRow   = document.getElementById('confirmRow');
+// Przełączniki widoków w modalu
+const viewLoginBtn   = document.getElementById('viewLoginBtn');
+const viewSignupBtn  = document.getElementById('viewSignupBtn');
+const loginView      = document.getElementById('loginView');
+const signupView     = document.getElementById('signupView');
+const forgotLink     = document.getElementById('forgotLink');
+const resetEmail     = document.getElementById('resetEmail');
+const resetSend      = document.getElementById('resetSend');
 
-const loginSubmit  = document.getElementById('loginSubmit');
-const resetRow     = document.getElementById('resetRow');
-const resetLink    = document.getElementById('resetLink');
-const switchRow    = document.getElementById('switchRow');
-const switchLink   = document.getElementById('switchLink');
+// Przyciski akcji
+const loginSend  = document.getElementById('loginSend');
+const signupSend = document.getElementById('signupSend');
+const loginCancel     = document.getElementById('loginCancel');
+const loginCancelTop  = document.getElementById('loginCancelTop');
 
-// ---------- Pomocnicze ----------
+// Helpers modala
+function openLogin() {
+  if (!loginModal) return;
+  showLoginView();                    // domyślnie login
+  loginModal.classList.add('open');
+  loginModal.setAttribute('aria-hidden', 'false');
+  setTimeout(() => loginEmail?.focus(), 0);
+}
+function closeLogin() {
+  if (!loginModal) return;
+  loginModal.classList.remove('open');
+  loginModal.setAttribute('aria-hidden', 'true');
+}
+function openMenu(){ accountMenu.hidden = false; }
+function closeMenu(){ accountMenu.hidden = true; }
+
+// Widoki w modalu
+function showLoginView(){
+  loginView?.classList.remove('hidden');
+  signupView?.classList.add('hidden');
+}
+function showSignupView(){
+  signupView?.classList.remove('hidden');
+  loginView?.classList.add('hidden');
+}
+
+// Inicjały z maila
 function initialsFromEmail(email){
   if (!email) return '?';
   const name = email.split('@')[0] || '';
-  const parts = name.replace(/[^\p{L}\p{N}_-]+/gu, ' ').trim().split(/[\.\_\- ]+/);
+  const parts = name.replace(/[^\p{L}\p{N}_-]+/gu, ' ')
+                    .trim().split(/[\.\_\- ]+/);
   const a = (parts[0]?.[0] || '').toUpperCase();
   const b = (parts[1]?.[0] || '').toUpperCase();
   return (a + (b || '')).slice(0,2) || '?';
 }
 
+// Render stanu użytkownika
 function renderUser(user){
   if (user){
-    const email = user.email || '(brak e-mail)';
+    avatarBtn?.classList.remove('guest');
+    const email = user.email || '(brak email)';
     const ini = initialsFromEmail(email);
-    avatarInitials.textContent = ini;
-    menuInitials.textContent   = ini;
-    menuEmail.textContent      = email;
-    menuStatus.textContent     = 'Zalogowany';
-    loginBtn.style.display  = 'none';
-    logoutBtn.style.display = 'inline-block';
+    if (avatarInitials) avatarInitials.textContent = ini;
+    if (menuInitials)   menuInitials.textContent   = ini;
+    if (menuEmail)      menuEmail.textContent      = email;
+    if (menuStatus)     menuStatus.textContent     = 'Zalogowany';
+    if (loginBtn)  loginBtn.style.display  = 'none';
+    if (logoutBtn) logoutBtn.style.display = 'inline-block';
   } else {
-    avatarInitials.textContent = '?';
-    menuInitials.textContent   = '?';
-    menuEmail.textContent      = 'Niezalogowany';
-    menuStatus.textContent     = '—';
-    loginBtn.style.display  = 'inline-block';
-    logoutBtn.style.display = 'none';
+    avatarBtn?.classList.add('guest');
+    if (avatarInitials) avatarInitials.textContent = '?';
+    if (menuInitials)   menuInitials.textContent   = '?';
+    if (menuEmail)      menuEmail.textContent      = 'Niezalogowany';
+    if (menuStatus)     menuStatus.textContent     = '—';
+    if (loginBtn)  loginBtn.style.display  = 'inline-block';
+    if (logoutBtn) logoutBtn.style.display = 'none';
   }
 }
 
-// ---------- Menu konta ----------
-function openMenu(){ accountMenu.hidden = false; }
-function closeMenu(){ accountMenu.hidden = true; }
-avatarBtn.addEventListener('click', (e) => {
+// Klik na avatarze
+avatarBtn?.addEventListener('click', (e) => {
   e.stopPropagation();
+  // Gość? Otwórz od razu modal logowania
+  if (avatarBtn.classList.contains('guest')) {
+    openLogin();
+    return;
+  }
+  // Zalogowany: pokaż/ukryj menu konta
   accountMenu.hidden ? openMenu() : closeMenu();
 });
+
+// Zamknięcie menu po kliknięciu poza
 document.addEventListener('click', (e) => {
   if (accountMenu.hidden) return;
   const inside = accountMenu.contains(e.target) || avatarBtn.contains(e.target);
   if (!inside) closeMenu();
 });
 
-// ---------- Modal ----------
-function openLoginModal(defaultMode='login'){
-  setMode(defaultMode);
-  loginModal.classList.add('open');
-  loginModal.setAttribute('aria-hidden','false');
-  setTimeout(()=> loginEmail?.focus(), 0);
-}
-function closeLoginModal(){
-  loginModal.classList.remove('open');
-  loginModal.setAttribute('aria-hidden','true');
-}
-loginBtn.addEventListener('click', () => { closeMenu(); openLoginModal('login'); });
-loginCancel.addEventListener('click', closeLoginModal);
-loginCancelTop.addEventListener('click', closeLoginModal);
-loginModal.addEventListener('click', (e) => {
-  if (e.target.classList?.contains('modal-backdrop')) closeLoginModal();
+// Przełączniki widoków
+viewLoginBtn?.addEventListener('click', showLoginView);
+viewSignupBtn?.addEventListener('click', showSignupView);
+
+// Zamknięcia modala
+loginCancel?.addEventListener('click', closeLogin);
+loginCancelTop?.addEventListener('click', closeLogin);
+loginModal?.addEventListener('click', (e) => {
+  if (e.target.classList?.contains('modal-backdrop')) closeLogin();
 });
 
-// ---------- Tryby: login / register ----------
-let mode = 'login';
-function setMode(m){
-  mode = m;
-  const isReg = (mode === 'register');
-  confirmRow.style.display = isReg ? 'block' : 'none';
-  loginSubmit.textContent  = isReg ? 'Zarejestruj' : 'Zaloguj';
-
-  // Pokaż reset tylko w logowaniu
-  if (resetRow) resetRow.style.display = isReg ? 'none' : 'block';
-  
-  // zdanie pod formularzem
-  if (isReg){
-    switchRow.firstChild.textContent = 'Masz już konto? ';
-    switchLink.textContent = 'Zaloguj się';
-  } else {
-    switchRow.firstChild.textContent = 'Nie masz jeszcze konta? ';
-    switchLink.textContent = 'Zarejestruj się tutaj';
-  }
-}
-switchLink.addEventListener('click', (e) => {
-  e.preventDefault();
-  setMode(mode === 'login' ? 'register' : 'login');
-});
-
-// ---------- Akcje: logowanie / rejestracja / reset ----------
-loginSubmit.addEventListener('click', async () => {
-  const email = (loginEmail.value || '').trim();
-  const pass  = (loginPass.value || '').trim();
+// Logowanie (email+hasło)
+loginSend?.addEventListener('click', async () => {
+  const email = (loginEmail?.value || '').trim();
+  const pass  = (loginPassword?.value || '').trim();
   if (!email || !pass){ alert('Podaj e-mail i hasło.'); return; }
 
-  try{
-    if (mode === 'login'){
-      const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
-      if (error) throw error;
-      closeLoginModal();
-    } else {
-      const pass2 = (loginPass2.value || '').trim();
-      if (pass !== pass2){ alert('Hasła nie są takie same.'); return; }
-      const { error } = await supabase.auth.signUp({
-        email, password: pass,
-        options: { emailRedirectTo: location.origin + location.pathname }
-      });
-      if (error) throw error;
-      alert('Sprawdź e-mail i potwierdź rejestrację.');
-      setMode('login');
-    }
-  } catch(err){
-    alert('Błąd: ' + err.message);
-  }
+  const { error } = await supabase.auth.signInWithPassword({ email, password: pass });
+  if (error){ alert('Błąd logowania: ' + error.message); return; }
+  closeLogin(); closeMenu();
 });
 
-resetLink.addEventListener('click', async (e) => {
+// Rejestracja (email+hasło)
+signupSend?.addEventListener('click', async () => {
+  const email = (signupEmail?.value || '').trim();
+  const pass  = (signupPassword?.value || '').trim();
+  if (!email || !pass){ alert('Podaj e-mail i hasło.'); return; }
+
+  const { error } = await supabase.auth.signUp({ email, password: pass });
+  if (error){ alert('Błąd rejestracji: ' + error.message); return; }
+  alert('Konto utworzone. Sprawdź e-mail (potwierdzenie) i zaloguj się.');
+  showLoginView();
+});
+
+// Reset hasła (tylko na widoku logowania)
+forgotLink?.addEventListener('click', async (e) => {
   e.preventDefault();
-  const email = (loginEmail.value || '').trim();
-  if (!email){ alert('Podaj e-mail, żeby wysłać link resetu.'); return; }
-  try{
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: location.origin + location.pathname
-    });
-    if (error) throw error;
-    alert('Wysłaliśmy link resetu. Sprawdź skrzynkę.');
-  } catch(err){
-    alert('Błąd: ' + err.message);
-  }
+  const email = (resetEmail?.value || loginEmail?.value || '').trim();
+  if (!email){ alert('Podaj adres e-mail do resetu.'); return; }
+  const redirectTo = location.origin + location.pathname; // wraca na tę stronę
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+  if (error){ alert('Błąd resetu: ' + error.message); return; }
+  alert('Wysłaliśmy link do resetu hasła. Sprawdź skrzynkę.');
 });
 
-// ---------- Wylogowanie ----------
-logoutBtn.addEventListener('click', async () => {
+// Główne przyciski menu
+loginBtn?.addEventListener('click', () => { closeMenu(); openLogin(); });
+logoutBtn?.addEventListener('click', async () => {
   await supabase.auth.signOut();
   renderUser(null);
   closeMenu();
 });
 
-// ---------- Inicjalizacja ----------
+// Inicjalizacja: wykryj sesję i reaguj na zmiany
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
   renderUser(session?.user || null);
+
   supabase.auth.onAuthStateChange((_event, session) => {
     renderUser(session?.user || null);
   });
