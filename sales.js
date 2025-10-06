@@ -296,17 +296,26 @@ const eClearPhoto= document.getElementById('eClearPhoto');
 
 function openEdit(r){
   editing = r;
-  eDate.value = r.sold_at;
-  eName.value = r.name;
-  eCost.value = r.cost;
-  eRev.value  = r.revenue;
-  ePrev.innerHTML = '';
-  if (r.photo_url){
-    const img = document.createElement('img');
-    img.src = r.photo_url; img.style.width='72px'; img.style.height='96px'; img.style.objectFit='cover'; img.style.borderRadius='8px';
-    ePrev.appendChild(img);
+  if (eDate) eDate.value = r.sold_at || '';
+  if (eName) eName.value = r.name || '';
+  if (eCost) eCost.value = r.cost ?? '';
+  if (eRev)  eRev.value  = r.revenue ?? '';
+
+  if (ePrev){
+    ePrev.innerHTML = '';
+    if (r.photo_url){
+      const img = document.createElement('img');
+      img.src = r.photo_url;
+      img.style.width='72px'; img.style.height='96px';
+      img.style.objectFit='cover'; img.style.borderRadius='8px';
+      img.loading = 'lazy';
+      ePrev.appendChild(img);
+    }
   }
-  eModal.classList.add('open'); eModal.setAttribute('aria-hidden','false');
+  if (eModal){
+    eModal.classList.add('open');
+    eModal.setAttribute('aria-hidden','false');
+  }
 }
 function closeEdit(){ editing=null; eModal.classList.remove('open'); eModal.setAttribute('aria-hidden','true'); }
 
