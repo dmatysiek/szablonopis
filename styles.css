@@ -291,16 +291,15 @@ input[type="file"].control{
 }
 .auth-switch .left{ margin-right:auto; }
 
-/* wiersz pod przyciskiem: reset (lewo) + rejestracja (prawo) */
 .auth-row{
   display:flex;
   align-items:center;
   justify-content:space-between;
   margin-top:10px;
 }
-.auth-row .right{ margin-left:auto; }
+.auth-row .right{ margin-left:auto; text-align:right; } /* wyrównanie do prawej + łamania działają ładnie */
+.auth-row.only-right{ justify-content:flex-end; }       /* dla widoku rejestracji */
 
-/* linki */
 .link{ color: var(--text); text-decoration: underline; }
 .link.small{ font-size: 13px; }
 
