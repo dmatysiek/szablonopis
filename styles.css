@@ -290,3 +290,22 @@ input[type="file"].control{
   margin-top:12px;
 }
 .auth-switch .left{ margin-right:auto; }
+
+/* wiersz pod przyciskiem: reset (lewo) + rejestracja (prawo) */
+.auth-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-top:10px;
+}
+.auth-row .right{ margin-left:auto; }
+
+/* linki */
+.link{ color: var(--text); text-decoration: underline; }
+.link.small{ font-size: 13px; }
+
+/* X zawsze wyraźnie biały (iOS) */
+.icon-btn.close{
+  color: #fff !important;
+  opacity: 1 !important;
+}
