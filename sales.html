@@ -175,7 +175,6 @@
     </div>
   </div>
   
-  <!-- MODAL LOGOWANIA / REJESTRACJI -->
   <div id="loginModal" class="modal" aria-hidden="true">
     <div class="modal-backdrop"></div>
     <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
@@ -184,7 +183,7 @@
         <button class="icon-btn close" id="loginCancelTop" title="Zamknij">✖</button>
       </div>
   
-      <!-- Widok: LOGOWANIE -->
+      <!-- LOGOWANIE -->
       <div id="loginView">
         <div class="form-grid">
           <div class="field">
@@ -195,22 +194,21 @@
             <label>Hasło</label>
             <input id="loginPassword" class="control" type="password" placeholder="••••••••">
           </div>
-          <div class="muted" style="margin-top:-2px;">
-            Zapomniałeś hasła? <a href="#" id="resetLink">Wyślij link resetu</a>
+  
+          <div class="form-meta-row">
+            <a href="#" id="resetLink" class="link small">Wyślij link resetu</a>
           </div>
         </div>
   
-        <div class="btn-row" style="margin-top:12px;">
-          <button id="doLogin" class="btn">Zaloguj</button>
-          <button id="loginCancel" class="btn secondary">Anuluj</button>
-        </div>
+        <button id="doLogin" class="btn" style="margin-top:10px;">Zaloguj</button>
   
-        <div class="muted" style="margin-top:10px; text-align:center;">
-          Nie masz jeszcze konta? <a href="#" id="gotoSignup">Zarejestruj się tutaj</a>
+        <div class="auth-switch">
+          <a href="#" id="backToDesc" class="link small left">Wróć do opisu</a>
+          <span class="muted">Nie masz jeszcze konta? <a href="#" id="gotoSignup" class="link">Zarejestruj się</a></span>
         </div>
       </div>
   
-      <!-- Widok: REJESTRACJA -->
+      <!-- REJESTRACJA -->
       <div id="signupView" hidden>
         <div class="form-grid">
           <div class="field">
@@ -227,13 +225,11 @@
           </div>
         </div>
   
-        <div class="btn-row" style="margin-top:12px;">
-          <button id="doSignup" class="btn">Zarejestruj</button>
-          <button id="signupCancel" class="btn secondary">Anuluj</button>
-        </div>
+        <button id="doSignup" class="btn" style="margin-top:10px;">Zarejestruj</button>
   
-        <div class="muted" style="margin-top:10px; text-align:center;">
-          Mam już konto. <a href="#" id="gotoLogin">Chcę się zalogować</a>
+        <div class="auth-switch">
+          <a href="#" id="backToDesc2" class="link small left">Wróć do opisu</a>
+          <span class="muted">Mam już konto. <a href="#" id="gotoLogin" class="link">Chcę się zalogować</a></span>
         </div>
       </div>
     </div>
