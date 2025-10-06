@@ -202,7 +202,23 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
   background: transparent; border: 1px solid var(--border);
   color: var(--text); padding: 6px 10px; border-radius: 10px; cursor: pointer;
 }
-.icon-btn.close{ padding: 6px 8px; }
+/* Ikona X w przycisku zamykania – zawsze wyraźnie biała (iOS/Safari) */
+.icon-btn.close {
+  color: #fff;
+  -webkit-text-fill-color: #fff;   /* iOS Safari */
+}
+
+.icon-btn.close .icon-x{
+  width: 18px;
+  height: 18px;
+  display: block;
+  fill: currentColor;              /* bierze #fff z rodzica */
+}
+
+/* trochę większy hit-target na mobile */
+@media (hover: none) {
+  .icon-btn.close { padding: 8px 10px; }
+}
 .icon-btn:hover{ border-color: var(--border-strong); }
 
 /* Avatar w prawym górnym rogu */
