@@ -51,6 +51,17 @@ function todayLocalYYYYMMDD(){
   return `${y}-${m}-${day}`;
 }
 
+function ymKey(d){ return d.toISOString().slice(0,7); } // jeśli nie masz – zostaw jak u Ciebie
+function initMonthPicker(){
+  const ym = ymKey(new Date());
+  if (monthPicker){
+    if (!monthPicker.value) monthPicker.value = ym; // ustaw tylko, gdy puste
+    currentYM = monthPicker.value || ym;
+  } else {
+    currentYM = ym;
+  }
+}
+
 // --- Gating: pokaż stronę dopiero po zalogowaniu ---
 async function ensureLoggedIn(){
   const { data:{ session } } = await supabase.auth.getSession();
@@ -69,9 +80,10 @@ supabase.auth.onAuthStateChange((_ev, session) => {
   if (UID){
     wrap.hidden = false; 
     closeLogin();
-    // jeśli pole daty jest puste – ustaw dzisiejszą
-    if (inDate && !inDate.value) inDate.value = todayLocalYYYYMMDD();
-    if (currentYM) loadMonth(currentYM);
+    // Ustaw miesiąc, jeśli jeszcze pusty (np. nowe urządzenie)
+    if (!monthPicker.value) initMonthPicker();
+    // Załaduj bieżący miesiąc
+    loadMonth(monthPicker.value);
   } else {
     wrap.hidden = true;  
     openLogin();
@@ -330,11 +342,12 @@ eClearPhoto?.addEventListener('click', async () => {
 (async () => {
   const uid = await ensureLoggedIn();
   if (!uid) return; // modal otwarty, czekamy na logowanie
-  const now = new Date();
-  const ym = ymKey(now);
-  monthPicker.value = ym;
-  inDate.value = todayLocalYYYYMMDD();
-  await loadMonth(ym);
+
+  initMonthPicker();                // << USTAW MIESIĄC TU
+  await loadMonth(monthPicker.value);
+
+  // jeśli chcesz: ustaw „dzisiaj” w polu daty przy starcie
+  if (inDate && !inDate.value) inDate.value = todayLocalYYYYMMDD();
 })();
 monthPicker?.addEventListener('change', async () => {
   if (!UID) return;
