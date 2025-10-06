@@ -295,10 +295,10 @@ input[type="file"].control{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-top:10px;
+  margin-top:16px;
 }
 .auth-row .right{ margin-left:auto; text-align:right; } /* wyrównanie do prawej + łamania działają ładnie */
-.auth-row.only-right{ justify-content:flex-end; }       /* dla widoku rejestracji */
+.auth-row.only-right{ justify-content:flex-end; margin-top:16px;}       /* dla widoku rejestracji */
 
 .link{ color: var(--text); text-decoration: underline; }
 .link.small{ font-size: 13px; }
