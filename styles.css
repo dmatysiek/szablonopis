@@ -33,14 +33,45 @@ body{
 }
 .topbar-inner{ max-width: 760px; margin: 0 auto; padding: 12px 16px 10px; }
 .title{ font-size: 20px; font-weight: 600; letter-spacing:.2px; }
-.tabs{ margin-top:8px; display:flex; gap:8px; }
-.tab{
-  padding:8px 12px; border-radius:10px; border:1px solid var(--border);
-  background:#141416; color:var(--text); font-weight:600; cursor:pointer;
-  transition: background .15s ease, border-color .15s ease;
-  touch-action: manipulation;
+
+/* Zakładki (chipsy) – bez hovera */
+.tabs{
+  margin-top:8px;
+  display:flex;
+  gap:8px;
 }
-.tab.active{ border-color: var(--border-strong); background:#1a1b1e; }
+.tab{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:36px;
+  padding:8px 14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:#151618;
+  color:var(--text);
+  font-weight:600;
+  font-size:14px;
+  letter-spacing:.2px;
+  text-decoration:none;          /* bez podkreślenia */
+  outline:none;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .04s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab.active{
+  background: linear-gradient(180deg,#1b1d21,#17191c);
+  border-color: var(--border-strong);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.tab:active{ transform: translateY(1px); }
+.tab:focus-visible{
+  box-shadow: 0 0 0 3px rgba(33,192,165,.18), inset 0 0 0 1px rgba(255,255,255,.05);
+  border-color: rgba(33,192,165,.45);
+}
+@media (max-width: 360px){
+  .tab{ padding: 7px 12px; border-radius: 10px; font-size: 13.5px; }
+}
 
 /* Karty */
 .card{
@@ -139,8 +170,8 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 
 /* miniatury w tabeli: 3:4, małe podglądy */
 .thumb{
-  width: 36px;      /* 3 */
-  height: 48px;     /* 4 */
+  width: 36px;
+  height: 48px;
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid var(--border);
@@ -149,13 +180,8 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 }
 
 /* kontener podglądu przy dodawaniu */
-.photo-preview{
-  margin-top: 8px;
-}
-.photo-preview .thumb{
-  width: 60px;   /* większy pogląd w formularzu */
-  height: 80px;  /* 3:4 */
-}
+.photo-preview{ margin-top: 8px; }
+.photo-preview .thumb{ width: 60px; height: 80px; }
 
 /* uściślenie szerokości kolumny z akcjami przy dodatkowych kolumnach */
 .table th.row-actions, .table td.row-actions{
@@ -168,23 +194,8 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 .btn.secondary{ background:#17181b; border-color: var(--border); }
 .btn.secondary:hover{ background:#1b1d21; }
 
-/* miniatury (tabela) 3:4 */
-.thumb{
-  width: 36px;
-  height: 48px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: #000;
-  display: block;
-}
-.photo-preview{ margin-top: 8px; }
-.photo-preview .thumb{ width: 60px; height: 80px; }
-
 /* modal */
-.modal{
-  position: fixed; inset: 0; display: none;
-}
+.modal{ position: fixed; inset: 0; display: none; }
 .modal.open{ display: block; }
 .modal-backdrop{
   position: absolute; inset:0; background: rgba(0,0,0,.5); backdrop-filter: blur(2px);
@@ -202,23 +213,12 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
   background: transparent; border: 1px solid var(--border);
   color: var(--text); padding: 6px 10px; border-radius: 10px; cursor: pointer;
 }
-/* Ikona X w przycisku zamykania – zawsze wyraźnie biała (iOS/Safari) */
-.icon-btn.close {
-  color: #fff;
-  -webkit-text-fill-color: #fff;   /* iOS Safari */
-}
-
-.icon-btn.close .icon-x{
-  width: 18px;
-  height: 18px;
-  display: block;
-  fill: currentColor;              /* bierze #fff z rodzica */
-}
+/* Ikona X – zawsze wyraźnie biała (iOS/Safari) */
+.icon-btn.close { color:#fff; -webkit-text-fill-color:#fff; }
+.icon-btn.close .icon-x{ width:18px; height:18px; display:block; fill: currentColor; }
 
 /* trochę większy hit-target na mobile */
-@media (hover: none) {
-  .icon-btn.close { padding: 8px 10px; }
-}
+@media (hover: none) { .icon-btn.close { padding: 8px 10px; } }
 .icon-btn:hover{ border-color: var(--border-strong); }
 
 /* Avatar w prawym górnym rogu */
@@ -263,12 +263,10 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 .inline-two{
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;                /* odstęp między nimi */
-  margin-top: 4px;          /* delikatny oddech nad wierszem */
-  margin-bottom: 2px;       /* i pod wierszem */
+  gap: 12px;
+  margin-top: 4px;
+  margin-bottom: 2px;
 }
-
-/* Na bardzo wąskich ekranach ułóż jednak w kolumnie */
 @media (max-width: 360px){
   .inline-two{ grid-template-columns: 1fr; }
 }
@@ -291,20 +289,16 @@ input[type="month"].control{
 input[type="file"].control{
   max-width: 100%;
   padding: 8px 12px;
-  /* opcjonalnie, jeśli coś jeszcze wystaje:
+  /* opcjonalnie:
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   */
 }
 
-.form-meta-row{
-  display:flex; justify-content:flex-end; margin-top:-4px;
-}
+/* Auth link-row */
+.form-meta-row{ display:flex; justify-content:flex-end; margin-top:-4px; }
 .link{ color: var(--text); text-decoration: underline; }
 .link.small{ font-size: 13px; }
-.auth-switch{
-  display:flex; align-items:center; justify-content:space-between;
-  margin-top:12px;
-}
+.auth-switch{ display:flex; align-items:center; justify-content:space-between; margin-top:12px; }
 .auth-switch .left{ margin-right:auto; }
 
 .auth-row{
@@ -313,14 +307,8 @@ input[type="file"].control{
   justify-content:space-between;
   margin-top:20px;
 }
-.auth-row .right{ margin-left:auto; text-align:right; } /* wyrównanie do prawej + łamania działają ładnie */
-.auth-row.only-right{ justify-content:flex-end; margin-top:20px;}       /* dla widoku rejestracji */
-
-.link{ color: var(--text); text-decoration: underline; }
-.link.small{ font-size: 13px; }
+.auth-row .right{ margin-left:auto; text-align:right; }
+.auth-row.only-right{ justify-content:flex-end; margin-top:20px; }
 
 /* X zawsze wyraźnie biały (iOS) */
-.icon-btn.close{
-  color: #fff !important;
-  opacity: 1 !important;
-}
+.icon-btn.close{ color:#fff !important; opacity:1 !important; }
