@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc — Sprzedaż</title>
-  <link rel="manifest" href="manifest.webmanifest?v=52">
+  <link rel="manifest" href="manifest.webmanifest?v=53">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=52">
+  <link rel="stylesheet" href="styles.css?v=53">
   <style>
     /* Na wszelki wypadek – twarde chowanie hidden */
     [hidden] { display: none !important; }
@@ -168,7 +168,7 @@
     </div>
   </div>
   
-  <!-- MODAL LOGOWANIA / REJESTRACJI (musi BYĆ w DOM-ie!) -->
+  <!-- MODAL LOGOWANIA / REJESTRACJI -->
   <div id="loginModal" class="modal" aria-hidden="true">
     <div class="modal-backdrop"></div>
     <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
@@ -176,38 +176,67 @@
         <div id="loginTitle" class="title">Konto</div>
         <button class="icon-btn close" id="loginCancelTop" title="Zamknij">✖</button>
       </div>
-
-      <div class="btn-row" style="margin-bottom:8px;">
-        <button id="switchToLogin" class="btn small">Zaloguj</button>
-        <button id="switchToSignup" class="btn small secondary">Zarejestruj</button>
+  
+      <!-- Widok: LOGOWANIE -->
+      <div id="loginView">
+        <div class="form-grid">
+          <div class="field">
+            <label>Adres e-mail</label>
+            <input id="loginEmail" class="control" type="email" placeholder="np. jan@twojmail.pl">
+          </div>
+          <div class="field">
+            <label>Hasło</label>
+            <input id="loginPassword" class="control" type="password" placeholder="••••••••">
+          </div>
+          <div class="muted" style="margin-top:-2px;">
+            Zapomniałeś hasła? <a href="#" id="resetLink">Wyślij link resetu</a>
+          </div>
+        </div>
+  
+        <div class="btn-row" style="margin-top:12px;">
+          <button id="doLogin" class="btn">Zaloguj</button>
+          <button id="loginCancel" class="btn secondary">Anuluj</button>
+        </div>
+  
+        <div class="muted" style="margin-top:10px; text-align:center;">
+          Nie masz jeszcze konta? <a href="#" id="gotoSignup">Zarejestruj się tutaj</a>
+        </div>
       </div>
-
-      <div class="form-grid">
-        <div class="field">
-          <label>Adres e-mail</label>
-          <input id="loginEmail" class="control" type="email" placeholder="np. jan@twojmail.pl">
+  
+      <!-- Widok: REJESTRACJA -->
+      <div id="signupView" hidden>
+        <div class="form-grid">
+          <div class="field">
+            <label>Adres e-mail</label>
+            <input id="suEmail" class="control" type="email" placeholder="np. jan@twojmail.pl">
+          </div>
+          <div class="field">
+            <label>Hasło</label>
+            <input id="suPass" class="control" type="password" placeholder="min. 6 znaków">
+          </div>
+          <div class="field">
+            <label>Powtórz hasło</label>
+            <input id="suPass2" class="control" type="password" placeholder="powtórz hasło">
+          </div>
         </div>
-        <div class="field" id="passwordField">
-          <label>Hasło</label>
-          <input id="loginPassword" class="control" type="password" placeholder="••••••••">
+  
+        <div class="btn-row" style="margin-top:12px;">
+          <button id="doSignup" class="btn">Zarejestruj</button>
+          <button id="signupCancel" class="btn secondary">Anuluj</button>
         </div>
-        <div class="muted" id="resetRow">
-          Zapomniałeś hasła? <a href="#" id="resetLink">Wyślij link resetu</a>
+  
+        <div class="muted" style="margin-top:10px; text-align:center;">
+          Mam już konto. <a href="#" id="gotoLogin">Chcę się zalogować</a>
         </div>
-      </div>
-
-      <div class="btn-row" style="margin-top:12px;">
-        <button id="loginSend" class="btn">Zaloguj</button>
-        <button id="loginCancel" class="btn secondary">Anuluj</button>
       </div>
     </div>
   </div>
 
   <script type="module" src="./supabase.js"></script>
-  <script type="module" src="./auth.js?v=12"></script>
-  <script type="module" src="./sales.js?v=52"></script>
+  <script type="module" src="./auth.js?v=13"></script>
+  <script type="module" src="./sales.js?v=53"></script>
   <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=52');
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=53');
   </script>
 </body>
 </html>
