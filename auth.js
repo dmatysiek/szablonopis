@@ -4,7 +4,7 @@ import { supabase } from './supabase.js';
 // --- Elementy topbar / konto ---
 const avatarBtn      = document.getElementById('avatarBtn');
 const accountMenu    = document.getElementById('accountMenu');
-const avatarInitials = document.getElementById('avatarInitials'); // ok, jeśli nie używasz inicjałów
+const avatarInitials = document.getElementById('avatarInitials');
 const menuInitials   = document.getElementById('menuInitials');
 const menuEmail      = document.getElementById('menuEmail');
 const menuStatus     = document.getElementById('menuStatus');
@@ -31,11 +31,9 @@ const doSignupBtn = document.getElementById('doSignup');
 // Linki i zamknięcia
 const gotoSignup     = document.getElementById('gotoSignup');
 const gotoLogin      = document.getElementById('gotoLogin');
-const loginCancel    = document.getElementById('loginCancel');   // może nie istnieć — używamy bezpiecznie
+const loginCancel    = document.getElementById('loginCancel');   // może nie istnieć
 const signupCancel   = document.getElementById('signupCancel');  // jw.
 const loginCancelTop = document.getElementById('loginCancelTop');
-const backToDesc     = document.getElementById('backToDesc');
-const backToDesc2    = document.getElementById('backToDesc2');
 
 function initialsFromEmail(email){
   if (!email) return '?';
@@ -67,17 +65,9 @@ function showSignupView(){
   signupView.hidden = false;
   setTimeout(()=> suEmail?.focus(), 0);
 }
-function openLogin(){ showLoginView(); openModal(); }
+export function openLogin(){ showLoginView(); openModal(); } // (sales.js może wołać własne openLogin, to nie przeszkadza)
 function openMenu(){ accountMenu.hidden = false; }
 function closeMenu(){ accountMenu.hidden = true; }
-
-// Jeśli gość zamknie modal → wracamy do Opis
-async function goHomeIfGuest(){
-  const { data:{ session } } = await supabase.auth.getSession();
-  if (!session?.user){
-    window.location.href = './index.html';
-  }
-}
 
 // Render stanu użytkownika
 function renderUser(user){
@@ -120,15 +110,13 @@ logoutBtn?.addEventListener('click', async () => {
   closeMenu();
 });
 
-// --- Zdarzenia modala / nawigacja ---
-loginCancel?.addEventListener('click', async () => { closeModal(); await goHomeIfGuest(); });
-signupCancel?.addEventListener('click', async () => { closeModal(); await goHomeIfGuest(); });
-loginCancelTop?.addEventListener('click', async () => { closeModal(); await goHomeIfGuest(); });
-loginModal?.addEventListener('click', async (e) => {
-  if (e.target.classList?.contains('modal-backdrop')) { closeModal(); await goHomeIfGuest(); }
+// --- Zdarzenia modala ---
+loginCancel?.addEventListener('click', closeModal);
+signupCancel?.addEventListener('click', closeModal);
+loginCancelTop?.addEventListener('click', closeModal);
+loginModal?.addEventListener('click', (e) => {
+  if (e.target.classList?.contains('modal-backdrop')) closeModal();
 });
-backToDesc?.addEventListener('click', async (e) => { e.preventDefault(); await goHomeIfGuest(); });
-backToDesc2?.addEventListener('click', async (e) => { e.preventDefault(); await goHomeIfGuest(); });
 
 // Przełączanie widoków linkami
 gotoSignup?.addEventListener('click', (e) => { e.preventDefault(); showSignupView(); });
@@ -162,7 +150,7 @@ resetLink?.addEventListener('click', async (e) => {
   e.preventDefault();
   const email = (loginEmail?.value || suEmail?.value || '').trim();
   if (!email){ alert('Podaj adres e-mail.'); return; }
-  const redirectTo = location.origin + location.pathname; // powrót na tę samą stronę
+  const redirectTo = location.origin + location.pathname; // powrót na tę stronę
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
   if (error){ alert('Błąd resetu: ' + error.message); return; }
   alert('Wysłaliśmy link do resetu hasła. Sprawdź skrzynkę.');
