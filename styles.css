@@ -242,3 +242,17 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 /* Naprawa kontekstu topbara (pozycjonowanie avatara/panelu) */
 .topbar-inner{ position: relative; display: flex; align-items: center; gap: 12px; }
 .tabs{ margin-left: 8px; }
+
+/* Dwie kontrolki obok siebie (responsywnie) */
+.inline-two{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;                /* odstęp między nimi */
+  margin-top: 4px;          /* delikatny oddech nad wierszem */
+  margin-bottom: 2px;       /* i pod wierszem */
+}
+
+/* Na bardzo wąskich ekranach ułóż jednak w kolumnie */
+@media (max-width: 360px){
+  .inline-two{ grid-template-columns: 1fr; }
+}
