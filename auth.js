@@ -63,6 +63,14 @@ function openLogin(){ showLoginView(); openModal(); } // wywoływane np. z sales
 function openMenu(){ accountMenu.hidden = false; }
 function closeMenu(){ accountMenu.hidden = true; }
 
+// Jeśli gość zamknie modal → wracamy do Opis
+async function goHomeIfGuest(){
+  const { data:{ session } } = await supabase.auth.getSession();
+  if (!session?.user){
+    window.location.href = './index.html';
+  }
+}
+
 // --- Avatar / inicjały ---
 function initialsFromEmail(email){
   if (!email) return '?';
@@ -114,12 +122,12 @@ logoutBtn?.addEventListener('click', async () => {
   closeMenu();
 });
 
-// --- Zdarzenia modala ---
-loginCancel?.addEventListener('click', closeModal);
-signupCancel?.addEventListener('click', closeModal);
-loginCancelTop?.addEventListener('click', closeModal);
-loginModal?.addEventListener('click', (e) => {
-  if (e.target.classList?.contains('modal-backdrop')) closeModal();
+// --- Zdarzenia modala (zamykanie + backdrop → powrót do Opisu dla gościa) ---
+loginCancel?.addEventListener('click', async () => { closeModal(); await goHomeIfGuest(); });
+signupCancel?.addEventListener('click', async () => { closeModal(); await goHomeIfGuest(); });
+loginCancelTop?.addEventListener('click', async () => { closeModal(); await goHomeIfGuest(); });
+loginModal?.addEventListener('click', async (e) => {
+  if (e.target.classList?.contains('modal-backdrop')) { closeModal(); await goHomeIfGuest(); }
 });
 
 // Przełączanie widoków (linki)
