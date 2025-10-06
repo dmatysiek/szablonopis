@@ -14,8 +14,8 @@ const logoutBtn      = document.getElementById('logoutBtn');
 // --- Modal + widoki ---
 const loginModal   = document.getElementById('loginModal');
 const loginView    = document.getElementById('loginView');
-const loginTitle = document.getElementById('loginTitle');
 const signupView   = document.getElementById('signupView');
+const loginTitle   = document.getElementById('loginTitle');
 
 // Pola logowania
 const loginEmail    = document.getElementById('loginEmail');
@@ -29,37 +29,12 @@ const suPass      = document.getElementById('suPass');
 const suPass2     = document.getElementById('suPass2');
 const doSignupBtn = document.getElementById('doSignup');
 
-// Linki i zamknięcia
+// Linki / przełączniki / zamknięcia
 const gotoSignup     = document.getElementById('gotoSignup');
 const gotoLogin      = document.getElementById('gotoLogin');
 const loginCancel    = document.getElementById('loginCancel');   // może nie istnieć
 const signupCancel   = document.getElementById('signupCancel');  // jw.
 const loginCancelTop = document.getElementById('loginCancelTop');
-
-function showLoginView(){
-  if (!loginView || !signupView) return;
-  loginView.hidden  = false;
-  signupView.hidden = true;
-  if (loginTitle) loginTitle.textContent = 'Logowanie';
-  setTimeout(()=> loginEmail?.focus(), 0);
-}
-
-function showSignupView(){
-  if (!loginView || !signupView) return;
-  loginView.hidden  = true;
-  signupView.hidden = false;
-  if (loginTitle) loginTitle.textContent = 'Rejestracja';
-  setTimeout(()=> suEmail?.focus(), 0);
-}
-
-function initialsFromEmail(email){
-  if (!email) return '?';
-  const base  = (email.split('@')[0] || '').trim();
-  const parts = base.replace(/[^\p{L}\p{N}_-]+/gu, ' ').split(/[\.\_\- ]+/).filter(Boolean);
-  const a = (parts[0]?.[0] || '').toUpperCase();
-  const b = (parts[1]?.[0] || '').toUpperCase();
-  return (a + (b || '')).slice(0,2) || '?';
-}
 
 // --- UI helpers ---
 function openModal(){
@@ -74,19 +49,31 @@ function showLoginView(){
   if (!loginView || !signupView) return;
   loginView.hidden  = false;
   signupView.hidden = true;
+  if (loginTitle) loginTitle.textContent = 'Logowanie';
   setTimeout(()=> loginEmail?.focus(), 0);
 }
 function showSignupView(){
   if (!loginView || !signupView) return;
   loginView.hidden  = true;
   signupView.hidden = false;
+  if (loginTitle) loginTitle.textContent = 'Rejestracja';
   setTimeout(()=> suEmail?.focus(), 0);
 }
-export function openLogin(){ showLoginView(); openModal(); } // (sales.js może wołać własne openLogin, to nie przeszkadza)
+function openLogin(){ showLoginView(); openModal(); } // wywoływane np. z sales.js
 function openMenu(){ accountMenu.hidden = false; }
 function closeMenu(){ accountMenu.hidden = true; }
 
-// Render stanu użytkownika
+// --- Avatar / inicjały ---
+function initialsFromEmail(email){
+  if (!email) return '?';
+  const base  = (email.split('@')[0] || '').trim();
+  const parts = base.replace(/[^\p{L}\p{N}_-]+/gu, ' ').split(/[\.\_\- ]+/).filter(Boolean);
+  const a = (parts[0]?.[0] || '').toUpperCase();
+  const b = (parts[1]?.[0] || '').toUpperCase();
+  return (a + (b || '')).slice(0,2) || '?';
+}
+
+// Render stanu użytkownika (avatar/menu)
 function renderUser(user){
   if (user){
     const email = user.email || '(brak email)';
@@ -135,11 +122,11 @@ loginModal?.addEventListener('click', (e) => {
   if (e.target.classList?.contains('modal-backdrop')) closeModal();
 });
 
-// Przełączanie widoków linkami
+// Przełączanie widoków (linki)
 gotoSignup?.addEventListener('click', (e) => { e.preventDefault(); showSignupView(); });
 gotoLogin?.addEventListener('click',  (e) => { e.preventDefault(); showLoginView(); });
 
-// Logowanie
+// --- Logowanie ---
 doLoginBtn?.addEventListener('click', async () => {
   const email = (loginEmail?.value || '').trim();
   const pass  = (loginPassword?.value || '').trim();
@@ -149,7 +136,7 @@ doLoginBtn?.addEventListener('click', async () => {
   closeModal(); closeMenu();
 });
 
-// Rejestracja
+// --- Rejestracja ---
 doSignupBtn?.addEventListener('click', async () => {
   const email = (suEmail?.value || '').trim();
   const p1    = (suPass?.value  || '').trim();
@@ -162,7 +149,7 @@ doSignupBtn?.addEventListener('click', async () => {
   showLoginView();
 });
 
-// Reset hasła
+// --- Reset hasła ---
 resetLink?.addEventListener('click', async (e) => {
   e.preventDefault();
   const email = (loginEmail?.value || suEmail?.value || '').trim();
