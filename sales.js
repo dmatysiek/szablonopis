@@ -29,7 +29,7 @@ function closeLogin(){ loginModal?.classList.remove('open'); loginModal?.setAttr
 
 // --- Utils ---
 const fmtPLN = v => (Number(v)||0).toLocaleString('pl-PL', { style:'currency', currency:'PLN' });
-const ymKey  = d => d.toISOString().slice(0,7);
+const ymKey  = d => d.toISOString().slice(0,7); // ← ZOSTAJE JEDNA WERSJA
 
 function monthRange(ym){
   const [y,m] = ym.split('-').map(Number);
@@ -51,11 +51,10 @@ function todayLocalYYYYMMDD(){
   return `${y}-${m}-${day}`;
 }
 
-function ymKey(d){ return d.toISOString().slice(0,7); } // jeśli nie masz – zostaw jak u Ciebie
 function initMonthPicker(){
   const ym = ymKey(new Date());
   if (monthPicker){
-    if (!monthPicker.value) monthPicker.value = ym; // ustaw tylko, gdy puste
+    if (!monthPicker.value) monthPicker.value = ym;
     currentYM = monthPicker.value || ym;
   } else {
     currentYM = ym;
