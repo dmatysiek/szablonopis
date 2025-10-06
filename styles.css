@@ -256,3 +256,27 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 @media (max-width: 360px){
   .inline-two{ grid-template-columns: 1fr; }
 }
+
+/* iOS Safari: nie pozwól kontrolkom rozszerzać kolumny grida */
+.form-grid > *, .inline-two > * { min-width: 0; }
+
+/* Upewnijmy się, że kontrolki naprawdę trzymają się kolumny */
+.control { width: 100%; max-width: 100%; }
+
+/* iOS: date/month – usuń natywne „rozpychanie”, zostaw miejsce na ikonkę */
+input[type="date"].control,
+input[type="month"].control{
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 34px; /* miejsce na wskaźnik kalendarza */
+}
+
+/* Plik też potrafi się rozpychać – przytnij */
+input[type="file"].control{
+  max-width: 100%;
+  padding: 8px 12px;
+  /* opcjonalnie, jeśli coś jeszcze wystaje:
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  */
+}
+
