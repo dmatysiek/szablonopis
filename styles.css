@@ -280,3 +280,13 @@ input[type="file"].control{
   */
 }
 
+.form-meta-row{
+  display:flex; justify-content:flex-end; margin-top:-4px;
+}
+.link{ color: var(--text); text-decoration: underline; }
+.link.small{ font-size: 13px; }
+.auth-switch{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-top:12px;
+}
+.auth-switch .left{ margin-right:auto; }
