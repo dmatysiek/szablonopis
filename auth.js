@@ -14,6 +14,7 @@ const logoutBtn      = document.getElementById('logoutBtn');
 // --- Modal + widoki ---
 const loginModal   = document.getElementById('loginModal');
 const loginView    = document.getElementById('loginView');
+const loginTitle = document.getElementById('loginTitle');
 const signupView   = document.getElementById('signupView');
 
 // Pola logowania
@@ -34,6 +35,22 @@ const gotoLogin      = document.getElementById('gotoLogin');
 const loginCancel    = document.getElementById('loginCancel');   // może nie istnieć
 const signupCancel   = document.getElementById('signupCancel');  // jw.
 const loginCancelTop = document.getElementById('loginCancelTop');
+
+function showLoginView(){
+  if (!loginView || !signupView) return;
+  loginView.hidden  = false;
+  signupView.hidden = true;
+  if (loginTitle) loginTitle.textContent = 'Logowanie';
+  setTimeout(()=> loginEmail?.focus(), 0);
+}
+
+function showSignupView(){
+  if (!loginView || !signupView) return;
+  loginView.hidden  = true;
+  signupView.hidden = false;
+  if (loginTitle) loginTitle.textContent = 'Rejestracja';
+  setTimeout(()=> suEmail?.focus(), 0);
+}
 
 function initialsFromEmail(email){
   if (!email) return '?';
