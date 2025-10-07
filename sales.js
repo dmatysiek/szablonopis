@@ -1,5 +1,7 @@
 // sales.js
+// sales.js
 import { supabase } from './supabase.js';
+import { openLogin as authOpenLogin } from './auth.js';
 
 // --- DOM ---
 const wrap = document.getElementById('appWrap');
@@ -21,11 +23,6 @@ const photoPreview = document.getElementById('photoPreview');
 
 const exportBtn = document.getElementById('exportCsv');
 const clearBtn  = document.getElementById('clearMonth');
-
-// login modal (z auth.js) – tylko wywołujemy jeśli trzeba
-const loginModal = document.getElementById('loginModal');
-function openLogin(){ loginModal?.classList.add('open'); loginModal?.setAttribute('aria-hidden','false'); }
-function closeLogin(){ loginModal?.classList.remove('open'); loginModal?.setAttribute('aria-hidden','true'); }
 
 // --- Utils ---
 const fmtPLN = v => (Number(v)||0).toLocaleString('pl-PL', { style:'currency', currency:'PLN' });
@@ -66,7 +63,7 @@ async function ensureLoggedIn(){
   const { data:{ session } } = await supabase.auth.getSession();
   if (!session?.user){
     wrap.hidden = true;
-    openLogin();
+    authOpenLogin();
     return null;
   }
   UID = session.user.id;
@@ -77,15 +74,13 @@ async function ensureLoggedIn(){
 supabase.auth.onAuthStateChange((_ev, session) => {
   UID = session?.user?.id || null;
   if (UID){
-    wrap.hidden = false; 
-    closeLogin();
-    // Ustaw miesiąc, jeśli jeszcze pusty (np. nowe urządzenie)
+    wrap.hidden = false;
+    // (nic nie otwieramy/zamykamy tutaj; auth.js sam zamknie modal po zalogowaniu)
     if (!monthPicker.value) initMonthPicker();
-    // Załaduj bieżący miesiąc
     loadMonth(monthPicker.value);
   } else {
-    wrap.hidden = true;  
-    openLogin();
+    wrap.hidden = true;
+    authOpenLogin();      // ⬅️ zamiast openLogin()
   }
 });
 
@@ -221,7 +216,7 @@ async function loadMonth(ym){
 
 // --- Add ---
 addBtn?.addEventListener('click', async () => {
-  if (!UID) { openLogin(); return; }
+  if (!UID) { authOpenLogin(); return; } 
   const sold_at = (inDate.value || '').trim();
   const name    = (inName.value || '').trim();
   const cost    = Number(inCost.value || 0);
