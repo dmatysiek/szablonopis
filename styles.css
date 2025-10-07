@@ -53,7 +53,7 @@ body{
   font-weight:600;
   font-size:14px;
   letter-spacing:.2px;
-  text-decoration:none;          /* bez podkreślenia */
+  text-decoration:none;
   outline:none;
   transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, transform .04s ease;
   touch-action: manipulation;
@@ -100,9 +100,9 @@ body{
   -webkit-text-fill-color: var(--text);
   outline: none;
   transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
-  touch-action: manipulation; /* domyślnie szybkie tapy */
+  touch-action: manipulation;
 }
-input[type="number"].control{ touch-action: pan-y; } /* przewijanie bez focusa */
+input[type="number"].control{ touch-action: pan-y; }
 .control:focus{
   border-color: var(--border-strong);
   box-shadow: 0 0 0 3px rgba(33,192,165,.12);
@@ -113,7 +113,7 @@ select.control option{ color:var(--text); background: var(--card-2); }
 .checkbox-row{
   display:flex; align-items:center; gap:10px;
   padding: 8px 0 0;
-  margin-bottom: 12px; /* odstęp gdy pole wyłączone */
+  margin-bottom: 12px;
 }
 .checkbox-row input[type="checkbox"]{
   width:18px; height:18px; margin:0; accent-color: var(--accent);
@@ -122,7 +122,7 @@ select.control option{ color:var(--text); background: var(--card-2); }
 /* Pole z uwagami */
 #uwagiLabel{ display:none; margin: 0; }
 
-/* Placeholdery – subtelnie szare */
+/* Placeholdery */
 input.control::placeholder, textarea.control::placeholder{
   color: rgba(232,232,236,.50) !important; opacity: 1;
 }
@@ -168,7 +168,7 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 .totals b{ font-weight:700; }
 .muted{ color: var(--text-dim); }
 
-/* miniatury w tabeli: 3:4, małe podglądy */
+/* miniatury */
 .thumb{
   width: 36px;
   height: 48px;
@@ -179,11 +179,11 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
   display: block;
 }
 
-/* kontener podglądu przy dodawaniu */
+/* podgląd przy dodawaniu */
 .photo-preview{ margin-top: 8px; }
 .photo-preview .thumb{ width: 60px; height: 80px; }
 
-/* uściślenie szerokości kolumny z akcjami przy dodatkowych kolumnach */
+/* kolumna akcji */
 .table th.row-actions, .table td.row-actions{
   white-space: nowrap;
   text-align: right;
@@ -216,12 +216,11 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 /* Ikona X – zawsze wyraźnie biała (iOS/Safari) */
 .icon-btn.close { color:#fff; -webkit-text-fill-color:#fff; }
 .icon-btn.close .icon-x{ width:18px; height:18px; display:block; fill: currentColor; }
-
-/* trochę większy hit-target na mobile */
+/* większy hit-target na mobile */
 @media (hover: none) { .icon-btn.close { padding: 8px 10px; } }
 .icon-btn:hover{ border-color: var(--border-strong); }
 
-/* Avatar w prawym górnym rogu */
+/* Avatar (prawy górny róg) */
 .avatar{
   position: relative;
   margin-left: auto;
@@ -236,26 +235,39 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
   cursor: pointer;
 }
 .avatar:hover{ border-color: var(--border-strong); }
-.avatar.sm{ width: 28px; height: 28px; font-size: 12px; }
+.avatar.sm{ width: 24px; height: 24px; font-size: 11px; } /* kompakt w menu */
 
-/* Panel konta (dropdown) */
+/* Panel konta – kompakt */
 .account-menu{
   position: absolute;
-  right: 16px;
-  top: 60px;
-  width: 260px;
+  right: 8px;
+  top: 56px;
+  width: auto;
+  min-width: 210px;
+  max-width: 280px;
+  padding: 10px 10px 8px;
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 12px;
+  border-radius: 12px;
+  box-shadow: 0 12px 24px rgba(0,0,0,.35);
   z-index: 10;
 }
-.account-row{ display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.account-info .muted{ font-size: 12px; }
-.menu-actions{ display: flex; gap: 8px; }
+.account-row{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.account-info{ display:flex; flex-direction:column; gap:2px; min-width:0; }
+#menuEmail{
+  font-size:13px; line-height:1.2;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+#menuStatus{ font-size:12px; line-height:1.1; }
+.menu-actions{ display:flex; gap:0; }
+.menu-actions .btn{ width:100%; padding:11px 12px; border-radius:10px; }
 
-/* Naprawa kontekstu topbara (pozycjonowanie avatara/panelu) */
+@media (max-width: 360px){
+  .account-menu{ min-width: 190px; padding: 8px; }
+  .menu-actions .btn{ padding: 10px 11px; }
+}
+
+/* Pozycjonowanie avatara/panelu */
 .topbar-inner{ position: relative; display: flex; align-items: center; gap: 12px; }
 .tabs{ margin-left: 8px; }
 
@@ -271,27 +283,24 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
   .inline-two{ grid-template-columns: 1fr; }
 }
 
-/* iOS Safari: nie pozwól kontrolkom rozszerzać kolumny grida */
+/* iOS: nie pozwól kontrolkom rozszerzać kolumny grida */
 .form-grid > *, .inline-two > * { min-width: 0; }
-
-/* Upewnijmy się, że kontrolki naprawdę trzymają się kolumny */
+/* Kontrolki trzymają szerokość kolumny */
 .control { width: 100%; max-width: 100%; }
 
-/* iOS: date/month – usuń natywne „rozpychanie”, zostaw miejsce na ikonkę */
+/* iOS: date/month – zostaw miejsce na ikonkę */
 input[type="date"].control,
 input[type="month"].control{
   -webkit-appearance: none;
   appearance: none;
-  padding-right: 34px; /* miejsce na wskaźnik kalendarza */
+  padding-right: 34px;
 }
 
-/* Plik też potrafi się rozpychać – przytnij */
+/* Plik – przytnij rozpychanie */
 input[type="file"].control{
   max-width: 100%;
   padding: 8px 12px;
-  /* opcjonalnie:
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  */
+  /* overflow: hidden; text-overflow: ellipsis; white-space: nowrap; */
 }
 
 /* Auth link-row */
