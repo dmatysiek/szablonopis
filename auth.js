@@ -59,7 +59,7 @@ function showSignupView(){
   if (loginTitle) loginTitle.textContent = 'Rejestracja';
   setTimeout(()=> suEmail?.focus(), 0);
 }
-function openLogin(){ showLoginView(); openModal(); } // wywoływane np. z sales.js
+export function openLogin(){ showLoginView(); openModal(); } // wywoływane np. z sales.js
 function openMenu(){ accountMenu.hidden = false; }
 function closeMenu(){ accountMenu.hidden = true; }
 
