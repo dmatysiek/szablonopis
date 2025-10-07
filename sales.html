@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc — Sprzedaż</title>
-  <link rel="manifest" href="manifest.webmanifest?v=58">
+  <link rel="manifest" href="manifest.webmanifest?v=59">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=58">
+  <link rel="stylesheet" href="styles.css?v=59">
   <style>
     /* Na wszelki wypadek – twarde chowanie hidden */
     [hidden] { display: none !important; }
@@ -184,7 +184,7 @@
     <div class="modal-dialog card card-pad" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
       <div class="modal-header">
         <div id="loginTitle" class="title">Konto</div>
-        <button class="icon-btn close" id="eCancelTop" title="Zamknij" aria-label="Zamknij">
+        <button class="icon-btn close" id="loginCancelTop" title="Zamknij" aria-label="Zamknij">
           <svg viewBox="0 0 24 24" class="icon-x" aria-hidden="true">
             <path d="M18.3 5.7a1 1 0 0 0-1.4-1.4L12 9.17 7.1 4.3a1 1 0 1 0-1.4 1.4L10.83 12l-5.13 5.1a1 1 0 1 0 1.4 1.4L12 14.83l4.9 4.87a1 1 0 0 0 1.4-1.4L13.17 12l5.13-5.1z"/>
           </svg>
@@ -245,10 +245,10 @@
   </div>
 
   <script type="module" src="./supabase.js"></script>
-  <script type="module" src="./auth.js?v=18"></script>
-  <script type="module" src="./sales.js?v=58"></script>
+  <script type="module" src="./auth.js?v=19"></script>
+  <script type="module" src="./sales.js?v=59"></script>
   <script>
-    if ('serviceWorker' in navigator) navigator.serviceorker.register('./sw.js?v=58');
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=59');
   </script>
 </body>
 </html>
