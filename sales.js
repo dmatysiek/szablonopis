@@ -35,6 +35,24 @@ function monthRange(ym){
   return { from: from.toISOString(), to: to.toISOString() };
 }
 
+const fmtPLN = v => (Number(v)||0).toLocaleString('pl-PL', { style:'currency', currency:'PLN' });
+
+// Akceptuje "128,99", "128.99", spacje, itp. Zwraca number lub 0
+function parseDecimal(input){
+  if (input == null) return 0;
+  let s = String(input).trim();
+  if (!s) return 0;
+  s = s.replace(/\s+/g, '');   // usuń spacje
+  s = s.replace(/,/g, '.');    // zamień przecinki na kropki
+  // jeśli ktoś wstawi wiele kropek jako separatory tysięcy, zostaw tylko pierwszą
+  const parts = s.split('.');
+  if (parts.length > 2) {
+    s = parts[0] + '.' + parts.slice(1).join('');
+  }
+  const n = parseFloat(s);
+  return Number.isFinite(n) ? n : 0;
+}
+
 let UID = null;
 let currentYM = null;
 let rows = []; // ostatnio pobrane wiersze
@@ -219,8 +237,8 @@ addBtn?.addEventListener('click', async () => {
   if (!UID) { authOpenLogin(); return; } 
   const sold_at = (inDate.value || '').trim();
   const name    = (inName.value || '').trim();
-  const cost    = Number(inCost.value || 0);
-  const revenue = Number(inRev.value  || 0);
+  const cost    = parseDecimal(inCost.value);
+  const revenue = parseDecimal(inRev.value);
   if (!sold_at || !name){ alert('Uzupełnij datę i nazwę.'); return; }
 
   let photo_url = null;
@@ -318,8 +336,8 @@ eSave?.addEventListener('click', async () => {
   let patch = {
     sold_at: eDate.value,
     name: eName.value.trim(),
-    cost: Number(eCost.value||0),
-    revenue: Number(eRev.value||0)
+    cost: parseDecimal(eCost.value),
+    revenue: parseDecimal(eRev.value)
   };
   if (ePhoto.files?.[0]){
     const url = await uploadPhotoIfAny(ePhoto.files[0]);
