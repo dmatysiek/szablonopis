@@ -1,11 +1,12 @@
 // sales.js
 // sales.js
 import { supabase } from './supabase.js';
+// UŻYJ TEGO SAMEGO „v”, CO W <script src="./auth.js?v=19">
 import { openLogin as authOpenLogin } from './auth.js?v=20';
 
 // --- DOM ---
 const wrap = document.getElementById('appWrap');
-wrap.hidden = true; // ukryj UI do momentu potwierdzenia sesji
+wrap.hidden = true;
 
 const monthPicker = document.getElementById('monthPicker');
 const tbody  = document.getElementById('salesTbody');
@@ -26,7 +27,7 @@ const clearBtn  = document.getElementById('clearMonth');
 
 // --- Utils ---
 const fmtPLN = v => (Number(v)||0).toLocaleString('pl-PL', { style:'currency', currency:'PLN' });
-const ymKey  = d => d.toISOString().slice(0,7); // ← ZOSTAJE JEDNA WERSJA
+const ymKey  = d => d.toISOString().slice(0,7);
 
 function monthRange(ym){
   const [y,m] = ym.split('-').map(Number);
@@ -35,20 +36,15 @@ function monthRange(ym){
   return { from: from.toISOString(), to: to.toISOString() };
 }
 
-const fmtPLN = v => (Number(v)||0).toLocaleString('pl-PL', { style:'currency', currency:'PLN' });
-
-// Akceptuje "128,99", "128.99", spacje, itp. Zwraca number lub 0
+// ⬇️ ZOSTAJE TYLKO RAZ fmtPLN; nie wstawiaj go drugi raz niżej!
 function parseDecimal(input){
   if (input == null) return 0;
   let s = String(input).trim();
   if (!s) return 0;
-  s = s.replace(/\s+/g, '');   // usuń spacje
-  s = s.replace(/,/g, '.');    // zamień przecinki na kropki
-  // jeśli ktoś wstawi wiele kropek jako separatory tysięcy, zostaw tylko pierwszą
+  s = s.replace(/\s+/g, '');
+  s = s.replace(/,/g, '.');
   const parts = s.split('.');
-  if (parts.length > 2) {
-    s = parts[0] + '.' + parts.slice(1).join('');
-  }
+  if (parts.length > 2) s = parts[0] + '.' + parts.slice(1).join('');
   const n = parseFloat(s);
   return Number.isFinite(n) ? n : 0;
 }
