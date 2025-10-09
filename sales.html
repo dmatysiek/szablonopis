@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <title>QuickDesc — Sprzedaż</title>
-  <link rel="manifest" href="manifest.webmanifest?v=61">
+  <link rel="manifest" href="manifest.webmanifest?v=62">
   <meta name="theme-color" content="#0b0b0c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=61">
+  <link rel="stylesheet" href="styles.css?v=62">
   <style>
     /* Na wszelki wypadek – twarde chowanie hidden */
     [hidden] { display: none !important; }
@@ -155,15 +155,19 @@
           <label>Nazwa przedmiotu</label>
           <input id="e-name" class="control" type="text" placeholder="np. Bluza Nike Vintage">
         </div>
-        <div class="field">
-          <label>Koszt (PLN)</label>
-          <input id="e-cost" class="control" type="text" inputmode="decimal"
-            pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">
-        </div>
-        <div class="field">
-          <label>Przychód (PLN)</label>
-          <input id="e-rev"  class="control" type="text" inputmode="decimal"
-            pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">
+
+        <!-- Koszt + Przychód w jednej linii (tak jak w dodawaniu) -->
+        <div class="inline-two">
+          <div class="field">
+            <label>Koszt (PLN)</label>
+            <input id="e-cost" class="control" type="text" inputmode="decimal"
+              pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">
+          </div>
+          <div class="field">
+            <label>Przychód (PLN)</label>
+            <input id="e-rev"  class="control" type="text" inputmode="decimal"
+              pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">
+          </div>
         </div>
   
         <div class="field">
@@ -251,9 +255,9 @@
   <!-- Skrypty: UWAGA — bez podwójnego ładowania auth.js -->
   <script type="module" src="./supabase.js"></script>
   <!-- USUNIĘTO: <script type="module" src="./auth.js?v=20"></script> -->
-  <script type="module" src="./sales.js?v=61"></script>
+  <script type="module" src="./sales.js?v=62"></script>
   <script>
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=61');
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=62');
   </script>
 </body>
 </html>
