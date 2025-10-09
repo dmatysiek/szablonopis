@@ -24,14 +24,23 @@ body{
 }
 .wrap{ max-width: 760px; margin: 0 auto; padding: 18px 16px 28px; }
 
-/* Topbar */
 .topbar{
-  position: sticky; top: 0; z-index: 1000;
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* ↑ było 5 */
   background: linear-gradient(180deg, #0b0b0c, rgba(11,11,12,.92));
   backdrop-filter: saturate(140%) blur(8px);
   border-bottom: 1px solid var(--border);
 }
-.topbar-inner{ position: relative; max-width: 760px; margin: 0 auto; padding: 12px 16px 10px; }
+
+/* węzeł referencyjny dla avatara; własny stacking context */
+.topbar-inner{
+  position: relative;  /* DODAJ */
+  z-index: 2;          /* DODAJ */
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 12px 16px 10px;
+}
 .title{ font-size: 20px; font-weight: 600; letter-spacing:.2px; }
 
 /* Zakładki (chipsy) – bez hovera */
@@ -239,8 +248,8 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
 
 /* Panel konta – kompakt */
 .account-menu{
-  position: absolute;
-  right: 8px;
+  position: fixed;     /* ← zamiast absolute */
+  right: 12px;         /* możesz wrócić do 8px jeśli chcesz */
   top: 56px;
   width: auto;
   min-width: 210px;
@@ -250,8 +259,9 @@ pre{ white-space: pre-wrap; word-wrap: break-word; margin:0; font: inherit; line
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: 0 12px 24px rgba(0,0,0,.35);
-  z-index: 1100;
+  z-index: 4000;   
 }
+.account-menu[hidden]{ display: none !important; }
 .account-row{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
 .account-info{ display:flex; flex-direction:column; gap:2px; min-width:0; }
 #menuEmail{
