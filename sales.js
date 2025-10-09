@@ -1,7 +1,7 @@
 // sales.js
 // sales.js
 import { supabase } from './supabase.js';
-import { openLogin as authOpenLogin } from './auth.js?v=19';
+import { openLogin as authOpenLogin } from './auth.js?v=20';
 
 // --- DOM ---
 const wrap = document.getElementById('appWrap');
