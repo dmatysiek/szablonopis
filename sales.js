@@ -36,18 +36,36 @@ function monthRange(ym){
   return { from: from.toISOString(), to: to.toISOString() };
 }
 
-// ⬇️ ZOSTAJE TYLKO RAZ fmtPLN; nie wstawiaj go drugi raz niżej!
 function parseDecimal(input){
   if (input == null) return 0;
+
+  // Na wszelki wypadek: zamień na string i przytnij
   let s = String(input).trim();
   if (!s) return 0;
-  s = s.replace(/\s+/g, '');
-  s = s.replace(/,/g, '.');
-  const parts = s.split('.');
-  if (parts.length > 2) s = parts[0] + '.' + parts.slice(1).join('');
-  const n = parseFloat(s);
+
+  // 1) Wyrzuć WSZYSTKIE białe znaki (w tym NBSP, narrow NBSP, thin space itd.)
+  s = s.replace(/[\s\u00A0\u202F\u2007\u2009\u2060]+/g, "");
+
+  // 2) Zostaw tylko cyfry, przecinki, kropki i minus (resztę wywal)
+  s = s.replace(/[^0-9,.\-]/g, "");
+
+  // 3) Zamień przecinki na kropki
+  s = s.replace(/,/g, ".");
+
+  // 4) Jeśli ktoś wstawił kilka kropek (tysiące), zostaw TYLKO pierwszą jako separator dzies.
+  const parts = s.split(".");
+  if (parts.length > 2) {
+    s = parts[0] + "." + parts.slice(1).join("");
+  }
+
+  // 5) Wyciągnij pierwszy sensowny „-?\d+(\.\d+)?” (gdyby coś jeszcze zostało)
+  const m = s.match(/-?\d+(?:\.\d+)?/);
+  if (!m) return 0;
+
+  const n = Number(m[0]);
   return Number.isFinite(n) ? n : 0;
 }
+
 
 let UID = null;
 let currentYM = null;
