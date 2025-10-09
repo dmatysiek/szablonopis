@@ -73,7 +73,8 @@
           <div class="field">
             <label>Koszt (PLN)</label>
             <input id="s-cost" class="control" type="text" inputmode="decimal"
-               pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="np. 40,00">          </div>
+               pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="np. 40,00">
+          </div>
           <div class="field">
             <label>Przychód (PLN)</label>
             <input id="s-rev"  class="control" type="text" inputmode="decimal"
@@ -157,11 +158,13 @@
         <div class="field">
           <label>Koszt (PLN)</label>
           <input id="e-cost" class="control" type="text" inputmode="decimal"
-            pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">        </div>
+            pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">
+        </div>
         <div class="field">
           <label>Przychód (PLN)</label>
           <input id="e-rev"  class="control" type="text" inputmode="decimal"
-            pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">        </div>
+            pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">
+        </div>
   
         <div class="field">
           <label>Zdjęcie (opcjonalnie)</label>
@@ -245,8 +248,9 @@
     </div>
   </div>
 
+  <!-- Skrypty: UWAGA — bez podwójnego ładowania auth.js -->
   <script type="module" src="./supabase.js"></script>
-  <script type="module" src="./auth.js?v=20"></script>
+  <!-- USUNIĘTO: <script type="module" src="./auth.js?v=20"></script> -->
   <script type="module" src="./sales.js?v=60"></script>
   <script>
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js?v=60');
