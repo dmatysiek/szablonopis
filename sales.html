@@ -72,11 +72,12 @@
         <div class="inline-two">
           <div class="field">
             <label>Koszt (PLN)</label>
-            <input id="s-cost" class="control" type="number" inputmode="decimal" step="0.01" min="0" placeholder="np. 40.00">
-          </div>
+            <input id="s-cost" class="control" type="text" inputmode="decimal"
+               pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="np. 40,00">          </div>
           <div class="field">
             <label>Przychód (PLN)</label>
-            <input id="s-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0" placeholder="np. 89.00">
+            <input id="s-rev"  class="control" type="text" inputmode="decimal"
+               pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="np. 89,00">
           </div>
         </div>
     
@@ -155,12 +156,12 @@
         </div>
         <div class="field">
           <label>Koszt (PLN)</label>
-          <input id="e-cost" class="control" type="number" inputmode="decimal" step="0.01" min="0">
-        </div>
+          <input id="e-cost" class="control" type="text" inputmode="decimal"
+            pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">        </div>
         <div class="field">
           <label>Przychód (PLN)</label>
-          <input id="e-rev" class="control" type="number" inputmode="decimal" step="0.01" min="0">
-        </div>
+          <input id="e-rev"  class="control" type="text" inputmode="decimal"
+            pattern="[0-9]+([,.][0-9]{0,2})?" autocomplete="off" placeholder="0,00">        </div>
   
         <div class="field">
           <label>Zdjęcie (opcjonalnie)</label>
