@@ -176,3 +176,7 @@ resetLink?.addEventListener('click', async (e) => {
     renderUser(session?.user || null);
   });
 })();
+
+accountMenu?.addEventListener('click', (e) => {
+  e.stopPropagation();
+});
