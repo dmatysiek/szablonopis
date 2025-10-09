@@ -1,18 +1,19 @@
 // sales.js
-// sales.js
 import { supabase } from './supabase.js';
-// UŻYJ TEGO SAMEGO „v”, CO W <script src="./auth.js?v=19">
-import { openLogin as authOpenLogin } from './auth.js?v=20';
+import {
+  fmtPLN, ymKey, monthRange, parseDecimal, todayLocalYYYYMMDD
+} from './common.js';
+import { openLogin as authOpenLogin } from './auth.js';
 
 // --- DOM ---
 const wrap = document.getElementById('appWrap');
 wrap.hidden = true;
 
 const monthPicker = document.getElementById('monthPicker');
-const tbody  = document.getElementById('salesTbody');
-const tCost  = document.getElementById('t-cost');
-const tRev   = document.getElementById('t-rev');
-const tProfit= document.getElementById('t-profit');
+const tbody   = document.getElementById('salesTbody');
+const tCost   = document.getElementById('t-cost');
+const tRev    = document.getElementById('t-rev');
+const tProfit = document.getElementById('t-profit');
 
 const addBtn = document.getElementById('addSale');
 const inDate = document.getElementById('s-date');
@@ -25,61 +26,11 @@ const photoPreview = document.getElementById('photoPreview');
 const exportBtn = document.getElementById('exportCsv');
 const clearBtn  = document.getElementById('clearMonth');
 
-// --- Utils ---
-const fmtPLN = v => (Number(v)||0).toLocaleString('pl-PL', { style:'currency', currency:'PLN' });
-const ymKey  = d => d.toISOString().slice(0,7);
-
-function monthRange(ym){
-  const [y,m] = ym.split('-').map(Number);
-  const from = new Date(Date.UTC(y, m-1, 1));
-  const to   = new Date(Date.UTC(y, m,   1));
-  return { from: from.toISOString(), to: to.toISOString() };
-}
-
-function parseDecimal(input){
-  if (input == null) return 0;
-
-  // Na wszelki wypadek: zamień na string i przytnij
-  let s = String(input).trim();
-  if (!s) return 0;
-
-  // 1) Wyrzuć WSZYSTKIE białe znaki (w tym NBSP, narrow NBSP, thin space itd.)
-  s = s.replace(/[\s\u00A0\u202F\u2007\u2009\u2060]+/g, "");
-
-  // 2) Zostaw tylko cyfry, przecinki, kropki i minus (resztę wywal)
-  s = s.replace(/[^0-9,.\-]/g, "");
-
-  // 3) Zamień przecinki na kropki
-  s = s.replace(/,/g, ".");
-
-  // 4) Jeśli ktoś wstawił kilka kropek (tysiące), zostaw TYLKO pierwszą jako separator dzies.
-  const parts = s.split(".");
-  if (parts.length > 2) {
-    s = parts[0] + "." + parts.slice(1).join("");
-  }
-
-  // 5) Wyciągnij pierwszy sensowny „-?\d+(\.\d+)?” (gdyby coś jeszcze zostało)
-  const m = s.match(/-?\d+(?:\.\d+)?/);
-  if (!m) return 0;
-
-  const n = Number(m[0]);
-  return Number.isFinite(n) ? n : 0;
-}
-
-
 let UID = null;
 let currentYM = null;
 let rows = []; // ostatnio pobrane wiersze
 
-// --- Date helpers ---
-function todayLocalYYYYMMDD(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}
-
+// --- Month init ---
 function initMonthPicker(){
   const ym = ymKey(new Date());
   if (monthPicker){
@@ -107,19 +58,17 @@ supabase.auth.onAuthStateChange((_ev, session) => {
   UID = session?.user?.id || null;
   if (UID){
     wrap.hidden = false;
-    // (nic nie otwieramy/zamykamy tutaj; auth.js sam zamknie modal po zalogowaniu)
     if (!monthPicker.value) initMonthPicker();
     loadMonth(monthPicker.value);
   } else {
     wrap.hidden = true;
-    authOpenLogin();      // ⬅️ zamiast openLogin()
+    authOpenLogin();
   }
 });
 
 // --- Storage (opcjonalne zdjęcia) ---
 async function uploadPhotoIfAny(file){
   if (!file) return null;
-  // bucket „qd-photos” musi istnieć (Public Read)
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
   const path = `${UID}/${crypto.randomUUID()}.${ext}`;
   const { data, error } = await supabase.storage.from('qd-photos').upload(path, file, {
@@ -141,7 +90,6 @@ async function fetchMonth(ym){
     .lt('sold_at',  to)
     .order('sold_at', { ascending:true })
     .order('created_at', { ascending:true });
-
   if (error){ alert('Błąd pobierania: ' + error.message); return []; }
   return data || [];
 }
@@ -248,7 +196,7 @@ async function loadMonth(ym){
 
 // --- Add ---
 addBtn?.addEventListener('click', async () => {
-  if (!UID) { authOpenLogin(); return; } 
+  if (!UID) { authOpenLogin(); return; }
   const sold_at = (inDate.value || '').trim();
   const name    = (inName.value || '').trim();
   const cost    = parseDecimal(inCost.value);
@@ -256,9 +204,7 @@ addBtn?.addEventListener('click', async () => {
   if (!sold_at || !name){ alert('Uzupełnij datę i nazwę.'); return; }
 
   let photo_url = null;
-  if (inPhoto.files?.[0]) {
-    photo_url = await uploadPhotoIfAny(inPhoto.files[0]);
-  }
+  if (inPhoto.files?.[0]) photo_url = await uploadPhotoIfAny(inPhoto.files[0]);
 
   const row = await insertRow({ sold_at, name, cost, revenue, photo_url });
   if (row){
@@ -378,10 +324,9 @@ eClearPhoto?.addEventListener('click', async () => {
   const uid = await ensureLoggedIn();
   if (!uid) return; // modal otwarty, czekamy na logowanie
 
-  initMonthPicker();                // << USTAW MIESIĄC TU
+  initMonthPicker();
   await loadMonth(monthPicker.value);
 
-  // jeśli chcesz: ustaw „dzisiaj” w polu daty przy starcie
   if (inDate && !inDate.value) inDate.value = todayLocalYYYYMMDD();
 })();
 monthPicker?.addEventListener('change', async () => {
